@@ -1,6 +1,0 @@
-{
-  "parent": "minecraft:item/generated",
-  "textures": {
-    "layer0": "mozombies_wave:item/disco_glasses"
-  }
-}

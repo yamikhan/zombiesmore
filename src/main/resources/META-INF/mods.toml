@@ -1,27 +1,54 @@
 modLoader="javafml"
-loaderVersion="[36,)"
+loaderVersion="[40,)"  # Updated for 1.18.2 Forge
 license="GNU"
 
 [[mods]]
-modId="mozombies_wave"
+modId="zombiesmore_yamikingg"
 version="${file.jarVersion}"
-displayName="Mo'Zombies Wave"
-credits=" All credits from creativity go to the original creator, coocoo617."
-displayURL="https://www.curseforge.com/minecraft/mc-mods/better-furnaces-reforged/"
+displayName="ZombiesMore"
+credits="Original Mo'Zombies concept by coocoo617, remake by Wilyicaro, and then me yamikingg"
+# displayURL=""  # Either remove or use your own URL
 logoFile="logo.png"
 authors="Wilyicaro"
+updateJSONURL=""  # Optional: Add if you have update JSON
+
 description='''
-Remake of the outdated mod from version 1.7.10 of the game, adds news zombies to the game,  14 mobs in all
+Remake of the original Mo'Zombies mod from Minecraft 1.7.10.
+
+Adds various themed zombie variants to the game including:
+- Disco Zombie
+- Nether Zombie
+- Zombie Dwarf
+- Zombie Chef
+- Zombie Cyborg
+- Zombie Herobrine
+- Zombie King
+- Zombie Knight
+- Zombie Miner
+- Zombie PA
+- Zombie Pirate
+- Zombie Creeper (Hybrid)
+- Giant (Vanilla enhanced)
+- Survivor (Friendly NPC)
+
+Features custom spawn placements and behaviors for each zombie type.
 '''
 
-[[dependencies.mozombies_wave]]
-    modId="minecraft"
-    mandatory=true
-    versionRange="1.18.,"
-    ordering="NONE"
-    side="BOTH"
+# Issue tracking URL (optional)
+issueTrackerURL=""
 
+# Mod dependencies
+[[dependencies.zombiesmore_yamikingg]]
+modId="minecraft"
+mandatory=true
+versionRange="[1.18.,)"
+ordering="NONE"
+side="BOTH"
 
-
-
-
+# If you have soft dependencies (optional)
+# [[dependencies.zombiesmore_yamikingg]]
+#     modId="jei"
+#     mandatory=false
+#     versionRange="[9.7.0.195,)"
+#     ordering="AFTER"
+#     side="CLIENT"

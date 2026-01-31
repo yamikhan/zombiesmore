@@ -1,27 +1,32 @@
-import com.sun.org.apache.xalan.internal.xsltc.compiler.Closure
+import groovy.json.JsonSlurper  // Remove the incorrect Closure import
 
 buildscript {
-    repositories {
-        maven { url = 'https://files.minecraftforge.net/maven' }
-        jcenter()
+    repositories {  // ← REQUIRED for classpath dependencies
+        maven { url = 'https://maven.minecraftforge.net' }
+        maven { url = 'https://maven.parchmentmc.org' }
         mavenCentral()
     }
+
     dependencies {
-        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '5.1.+', changing: true
+        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '[6.0,6.2)', changing: true
+        classpath 'org.parchmentmc:librarian:1.+'  // Add Parchment Librarian
     }
 }
 apply plugin: 'net.minecraftforge.gradle'
+apply plugin: 'org.parchmentmc.librarian.forgegradle'  // Apply Parchment plugin
 apply plugin: 'eclipse'
 
 version = "${minecraft_version}-${mod_version}"
-group = 'wily.mozombies_wave'
+group = 'yamikingg.zombiesmore_yamikingg'
 archivesBaseName = "Mo'Zombies Wave"
 
 java.toolchain.languageVersion = JavaLanguageVersion.of(17)
 
 minecraft {
-    mappings channel: "${mappings_channel}", version: "${minecraft_version}"
-
+    // Change from property-based to direct Parchment mapping
+    mappings channel: 'parchment', version: '2022.11.27-1.19.2'
+    // OR if you want to keep it dynamic in gradle.properties:
+    // mappings channel: "${mappings_channel}", version: "${parchment_version}"
 
     runs {
         client {
@@ -30,8 +35,12 @@ minecraft {
             property 'forge.logging.markers', 'REGISTRIES'
             property 'forge.logging.console.level', 'debug'
 
+            // Add these properties for better debugging
+            property 'mixin.env.remapRefMap', 'true'
+            property 'mixin.env.refMapRemappingFile', "${buildDir}/createSrgToMcp/output.srg"
+
             mods {
-                betterfurnaces {
+                zombiesmore_yamikingg {
                     source sourceSets.main
                 }
             }
@@ -43,8 +52,27 @@ minecraft {
             property 'forge.logging.markers', 'REGISTRIES'
             property 'forge.logging.console.level', 'debug'
 
+            property 'mixin.env.remapRefMap', 'true'
+            property 'mixin.env.refMapRemappingFile', "${buildDir}/createSrgToMcp/output.srg"
+
             mods {
-                betterfurnaces {
+                zombiesmore_yamikingg {
+                    source sourceSets.main
+                }
+            }
+        }
+
+        // Add data generation run configuration
+        data {
+            workingDirectory project.file('run')
+
+            property 'forge.logging.markers', 'REGISTRIES'
+            property 'forge.logging.console.level', 'debug'
+
+            args '--mod', 'zombiesmore_yamikingg', '--all', '--output', file('src/generated/resources/'), '--existing', file('src/main/resources/')
+
+            mods {
+                zombiesmore_yamikingg {
                     source sourceSets.main
                 }
             }
@@ -52,15 +80,18 @@ minecraft {
     }
 }
 
+// Add source sets for generated data
+sourceSets.main.resources { srcDir 'src/generated/resources' }
+
 jar {
     manifest {
         attributes([
-                "Specification-Title"     : "betterfurnaces",
-                "Specification-Vendor"    : "wily",
+                "Specification-Title"     : "zombiesmore",
+                "Specification-Vendor"    : "yamikingg",
                 "Specification-Version"   : "1",
                 "Implementation-Title"    : project.name,
                 "Implementation-Version"  : "${version}",
-                "Implementation-Vendor"   : "wily",
+                "Implementation-Vendor"   : "yamikingg",
                 "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
         ])
     }
@@ -68,13 +99,16 @@ jar {
 
 dependencies {
     minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
+
+    // Optional: If you use mixins
+    // annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
+
     //compileOnly fg.deobf("mezz.jei:jei-${minecraft_version}:${jei_version}:api")
     //runtimeOnly fg.deobf("mezz.jei:jei-${minecraft_version}:${jei_version}")
     //compileOnly fg.deobf("curse.maven:project-mmo-${pmmo_version}")
     //runtimeOnly fg.deobf("curse.maven:project-mmo-${pmmo_version}")
-
-
 }
+
 repositories {
     maven {
         // location of the maven that hosts JEI files
@@ -95,6 +129,10 @@ repositories {
     maven {
         url "https://maven.shedaniel.me/"
     }
+    maven {
+        url "https://maven.parchmentmc.org"  // Ensure Parchment is in repositories
+    }
 }
 
-
+// Optional: Configure jar output
+jar.finalizedBy('reobfJar')

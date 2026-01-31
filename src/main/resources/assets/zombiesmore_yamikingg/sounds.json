@@ -1,0 +1,10 @@
+{
+  "hurt_survivor": {
+    "category": "ambient",
+    "sounds": [{"name": "zombiesmore_yamikingg:hurt_old"}]
+  },
+  "hurt_survivor_female": {
+    "category": "ambient",
+    "sounds": [{"name": "zombiesmore_yamikingg:hurt_female"}]
+  }
+}
