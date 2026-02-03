@@ -8,9 +8,10 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Random;
+import net.minecraft.util.RandomSource;
 
-	public class DiscoZombie extends AbstractMoZombie {
+
+public class DiscoZombie extends AbstractMoZombie {
 		public DiscoZombie(EntityType<? extends AbstractMoZombie> entityType, Level world) {
 			super(entityType,world);
 
@@ -32,7 +33,7 @@ import java.util.Random;
 		public void tick() {
 			super.tick();
 
-			Random random = (Random) this.random;
+			RandomSource random = this.random;
 			if (true)
 				for (int l = 0; l < 1; ++l) {
 					double d0 = (getX() + random.nextFloat());
