@@ -6,6 +6,7 @@ import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.Level;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Random;
 
@@ -19,7 +20,7 @@ import java.util.Random;
 
 
 		@Override
-		public SoundEvent getAmbientSound() {
+		public @NotNull SoundEvent getAmbientSound() {
 			return SoundEvents.MUSIC_DISC_STAL;
 		}
 
@@ -31,7 +32,7 @@ import java.util.Random;
 		public void tick() {
 			super.tick();
 
-			Random random = this.random;
+			Random random = (Random) this.random;
 			if (true)
 				for (int l = 0; l < 1; ++l) {
 					double d0 = (getX() + random.nextFloat());

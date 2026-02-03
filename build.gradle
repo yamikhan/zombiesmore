@@ -18,7 +18,7 @@ apply plugin: 'eclipse'
 
 version = "${minecraft_version}-${mod_version}"
 group = 'yamikingg.zombiesmore_yamikingg'
-archivesBaseName = "Mo'Zombies Wave"
+archivesBaseName = "ZombiesMore"
 
 java.toolchain.languageVersion = JavaLanguageVersion.of(17)
 

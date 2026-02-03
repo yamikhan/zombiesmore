@@ -24,7 +24,7 @@ public class Registration {
 
 	private static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, ZombiesMore.MODID);
 	private static final DeferredRegister<SoundEvent> SOUNDS = DeferredRegister.create(ForgeRegistries.SOUND_EVENTS, ZombiesMore.MODID);
-	public static final DeferredRegister<EntityType<?>> ENTITIES = DeferredRegister.create(ForgeRegistries.ENTITIES, ZombiesMore.MODID);
+	public static final DeferredRegister<EntityType<?>> ENTITIES = DeferredRegister.create(ForgeRegistries.ENTITY_TYPES, ZombiesMore.MODID);
 
 	public static void init() {
 		IEventBus eventBus = FMLJavaModLoadingContext.get().getModEventBus();
