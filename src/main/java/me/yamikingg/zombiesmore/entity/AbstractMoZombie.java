@@ -27,10 +27,10 @@ public abstract class AbstractMoZombie extends Zombie {
 	}
 
 	public static int ID;
-	public static String name;
+	public static String NAME;
 
-	public String getNameID() {
-		return this.name;
+	public String getNAMEID() {
+		return this.NAME;
 	}
 
 	@Override
@@ -68,7 +68,7 @@ public abstract class AbstractMoZombie extends Zombie {
 		this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, ZombieNotch.class, true));
 	}
 
-	// New method for 1.20+ - if you want to keep the old name for compatibility
+	// New method for 1.20+ - if you want to keep the old NAME for compatibility
 	@Override
 	protected boolean convertsInWater() {
 		return false; // Husk-specific behavior, change as needed
@@ -78,20 +78,20 @@ public abstract class AbstractMoZombie extends Zombie {
 	public static class MoZombieRenderer extends AbstractZombieRenderer<AbstractMoZombie, ZombieModel<AbstractMoZombie>> {
 		private final ResourceLocation texture;
 
-		public MoZombieRenderer(EntityRendererProvider.Context context, String name) {
-			this(context, ModelLayers.ZOMBIE, ModelLayers.ZOMBIE_INNER_ARMOR, ModelLayers.ZOMBIE_OUTER_ARMOR, name);
+		public MoZombieRenderer(EntityRendererProvider.Context context, String NAME) {
+			this(context, ModelLayers.ZOMBIE, ModelLayers.ZOMBIE_INNER_ARMOR, ModelLayers.ZOMBIE_OUTER_ARMOR, NAME);
 		}
 
 		public MoZombieRenderer(EntityRendererProvider.Context context,
 								ModelLayerLocation layer,
 								ModelLayerLocation innerArmorLayer,
 								ModelLayerLocation outerArmorLayer,
-								String name) {
+								String NAME) {
 			super(context,
 					new ZombieModel<>(context.bakeLayer(layer)),
 					new ZombieModel<>(context.bakeLayer(innerArmorLayer)),
 					new ZombieModel<>(context.bakeLayer(outerArmorLayer)));
-			this.texture = new ResourceLocation(ZombiesMore.MODID, "textures/entity/" + name + ".png");
+			this.texture = new ResourceLocation(ZombiesMore.MODID, "textures/entity/" + NAME + ".png");
 		}
 
 		@Override

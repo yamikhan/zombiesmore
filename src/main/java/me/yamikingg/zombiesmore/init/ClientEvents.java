@@ -24,18 +24,18 @@ public class ClientEvents {
 	public static void entityRenderEvent(EntityRenderersEvent.RegisterRenderers event) {
 
 		EntityRendererProvider<AbstractMoZombie> dwarfRenderFactory = ZombieDwarf.RendererZombieDwarf::new;
-		if (Config.oldDwarfZombieModel.get())  dwarfRenderFactory = manager -> new AbstractMoZombie.MoZombieRenderer(manager, ZombieDwarf.name);
-		event.registerEntityRenderer(Registration.DISCO_ZOMBIE.get(), manager -> new AbstractMoZombie.MoZombieRenderer(manager, DiscoZombie.name));
-		event.registerEntityRenderer(Registration.NETHER_ZOMBIE.get(), manager -> new AbstractMoZombie.MoZombieRenderer(manager, NetherZombie.name));
-		event.registerEntityRenderer(Registration.ZOMBIE_CHEF.get(), manager -> new AbstractMoZombie.MoZombieRenderer(manager, ZombieChef.name));
-		event.registerEntityRenderer(Registration.ZOMBIE_CYBORG.get(), manager -> new AbstractMoZombie.MoZombieRenderer(manager, ZombieCyborg.name));
-		event.registerEntityRenderer(Registration.ZOMBIE_HEROBRINE.get(), manager -> new AbstractMoZombie.MoZombieRenderer(manager, ZombieHerobrine.name));
-		event.registerEntityRenderer(Registration.ZOMBIE_KING.get(), manager -> new AbstractMoZombie.MoZombieRenderer(manager, ZombieKing.name));
-		event.registerEntityRenderer(Registration.ZOMBIE_KNIGHT.get(), manager -> new AbstractMoZombie.MoZombieRenderer(manager, ZombieKnight.name));
-		event.registerEntityRenderer(Registration.ZOMBIE_MINER.get(), manager -> new AbstractMoZombie.MoZombieRenderer(manager, ZombieMiner.name));
-		event.registerEntityRenderer(Registration.ZOMBIE_NOTCH.get(), manager -> new AbstractMoZombie.MoZombieRenderer(manager, ZombieNotch.name));
-		event.registerEntityRenderer(Registration.ZOMBIE_PA.get(), manager -> new AbstractMoZombie.MoZombieRenderer(manager, ZombiePa.name));
-		event.registerEntityRenderer(Registration.ZOMBIE_PIRATE.get(), manager -> new AbstractMoZombie.MoZombieRenderer(manager, ZombiePirate.name));
+		if (Config.oldDwarfZombieModel.get())  dwarfRenderFactory = manager -> new AbstractMoZombie.MoZombieRenderer(manager, ZombieDwarf.NAME);
+		event.registerEntityRenderer(Registration.DISCO_ZOMBIE.get(), manager -> new AbstractMoZombie.MoZombieRenderer(manager, DiscoZombie.NAME));
+		event.registerEntityRenderer(Registration.NETHER_ZOMBIE.get(), manager -> new AbstractMoZombie.MoZombieRenderer(manager, NetherZombie.NAME));
+		event.registerEntityRenderer(Registration.ZOMBIE_CHEF.get(), manager -> new AbstractMoZombie.MoZombieRenderer(manager, ZombieChef.NAME));
+		event.registerEntityRenderer(Registration.ZOMBIE_CYBORG.get(), manager -> new AbstractMoZombie.MoZombieRenderer(manager, ZombieCyborg.NAME));
+		event.registerEntityRenderer(Registration.ZOMBIE_HEROBRINE.get(), manager -> new AbstractMoZombie.MoZombieRenderer(manager, ZombieHerobrine.NAME));
+		event.registerEntityRenderer(Registration.ZOMBIE_KING.get(), manager -> new AbstractMoZombie.MoZombieRenderer(manager, ZombieKing.NAME));
+		event.registerEntityRenderer(Registration.ZOMBIE_KNIGHT.get(), manager -> new AbstractMoZombie.MoZombieRenderer(manager, ZombieKnight.NAME));
+		event.registerEntityRenderer(Registration.ZOMBIE_MINER.get(), manager -> new AbstractMoZombie.MoZombieRenderer(manager, ZombieMiner.NAME));
+		event.registerEntityRenderer(Registration.ZOMBIE_NOTCH.get(), manager -> new AbstractMoZombie.MoZombieRenderer(manager, ZombieNotch.NAME));
+		event.registerEntityRenderer(Registration.ZOMBIE_PA.get(), manager -> new AbstractMoZombie.MoZombieRenderer(manager, ZombiePa.NAME));
+		event.registerEntityRenderer(Registration.ZOMBIE_PIRATE.get(), manager -> new AbstractMoZombie.MoZombieRenderer(manager, ZombiePirate.NAME));
 		event.registerEntityRenderer(Registration.SURVIVOR.get(), Survivor.SurvivorRenderer::new);
 		event.registerEntityRenderer(Registration.ZOMBIE_CREEPER.get(), ZombieCreeper.CreeperRenderer::new);
 		event.registerEntityRenderer(Registration.ZOMBIE_DWARF.get(), dwarfRenderFactory);

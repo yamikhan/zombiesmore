@@ -9,6 +9,8 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.nbt.CompoundTag;
+import org.jetbrains.annotations.NotNull;
+
 import javax.annotation.Nullable;
 
 public class ZombieNotch extends AbstractMoZombie {
@@ -33,11 +35,11 @@ public class ZombieNotch extends AbstractMoZombie {
 	@Override
 	@Nullable
 	public net.minecraft.world.entity.SpawnGroupData finalizeSpawn(
-			ServerLevelAccessor level,
-			DifficultyInstance difficulty,
-			net.minecraft.world.entity.MobSpawnType spawnType,
-			@Nullable net.minecraft.world.entity.SpawnGroupData spawnData,
-			@Nullable CompoundTag dataTag) {
+            @NotNull ServerLevelAccessor level,
+            @NotNull DifficultyInstance difficulty,
+            net.minecraft.world.entity.@NotNull MobSpawnType spawnType,
+            @Nullable net.minecraft.world.entity.SpawnGroupData spawnData,
+            @Nullable CompoundTag dataTag) {
 
 		net.minecraft.world.entity.SpawnGroupData data = super.finalizeSpawn(level, difficulty, spawnType, spawnData, dataTag);
 		return data;

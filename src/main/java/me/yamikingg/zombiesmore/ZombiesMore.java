@@ -155,6 +155,8 @@ public class ZombiesMore {
 
 		event.put(Registration.SURVIVOR.get(),
 				me.yamikingg.zombiesmore.entity.Survivor.createAttributes().build());
+		event.put(Registration.ZOMBIE_NOTCH.get(),
+				me.yamikingg.zombiesmore.entity.ZombieNotch.createAttributes().build());
 
 		LOGGER.info("Entity attributes registered successfully!");
 	}
