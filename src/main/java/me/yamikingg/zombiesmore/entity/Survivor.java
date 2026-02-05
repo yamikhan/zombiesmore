@@ -44,12 +44,13 @@ import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.phys.AABB;
 import me.yamikingg.zombiesmore.ZombiesMore;
 import me.yamikingg.zombiesmore.init.Registration;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 import java.util.List;
 import java.util.UUID;
-
 
 public class Survivor extends AgeableMob implements NeutralMob {
 	private static final UUID SPEED_MODIFIER_BABY_UUID = UUID.fromString("B9766B59-9566-4402-BC1F-2EE2A276D836");
@@ -58,16 +59,19 @@ public class Survivor extends AgeableMob implements NeutralMob {
 	private static final UniformInt ALERT_INTERVAL = TimeUtil.rangeOfSeconds(4, 6);
 	private static final UniformInt PERSISTENT_ANGER_TIME = TimeUtil.rangeOfSeconds(20, 39);
 
-	private int ticksUntilNextAlert;
-	public static String name = "survivor";
+	public static final String NAME = "survivor";
 	public static final int ID = 27;
+
 	private static final UUID SPEED_MODIFIER_ATTACKING_UUID = UUID.fromString("49455A49-7EC5-45BA-B886-3B90B23A1718");
 	private static final AttributeModifier SPEED_MODIFIER_ATTACKING = new AttributeModifier(SPEED_MODIFIER_ATTACKING_UUID, "Attacking speed boost", 0.05D, AttributeModifier.Operation.ADDITION);
+
+	private int ticksUntilNextAlert;
 	private UUID persistentAngerTarget;
 	private int remainingPersistentAngerTime;
 
 	public Survivor(EntityType<? extends Survivor> entityType, Level world) {
 		super(entityType, world);
+		this.xpReward = 5;
 	}
 
 	@Override
@@ -77,6 +81,7 @@ public class Survivor extends AgeableMob implements NeutralMob {
 		return survivor;
 	}
 
+	@Override
 	protected void defineSynchedData() {
 		super.defineSynchedData();
 		this.entityData.define(DATA_TYPE_ID, 0);
@@ -95,7 +100,7 @@ public class Survivor extends AgeableMob implements NeutralMob {
 		this.getEntityData().set(DATA_TYPE_ID, type);
 	}
 
-	// Fixed: Changed return type and removed parameter
+
 	protected int getExperienceReward(Player player) {
 		if (this.isBaby()) {
 			this.xpReward = (int)((float)this.xpReward * 2.5F);
@@ -108,6 +113,7 @@ public class Survivor extends AgeableMob implements NeutralMob {
 		return this.remainingPersistentAngerTime;
 	}
 
+	@Override
 	public void startPersistentAngerTimer() {
 		this.setRemainingPersistentAngerTime(PERSISTENT_ANGER_TIME.sample(this.random));
 	}
@@ -128,19 +134,21 @@ public class Survivor extends AgeableMob implements NeutralMob {
 		this.persistentAngerTarget = target;
 	}
 
+	@Override
 	public void addAdditionalSaveData(@NotNull CompoundTag compoundTag) {
 		super.addAdditionalSaveData(compoundTag);
 		compoundTag.putInt("Type", getSurvivorType());
 		this.addPersistentAngerSaveData(compoundTag);
 	}
 
+	@Override
 	public void readAdditionalSaveData(@NotNull CompoundTag compoundTag) {
 		super.readAdditionalSaveData(compoundTag);
 		this.setSurvivorType(compoundTag.getInt("Type"));
-		if (!level.isClientSide) //FORGE: allow this entity to be read from nbt on client. (Fixes MC-189565)
-			this.readPersistentAngerSaveData(this.level, compoundTag);
+		this.readPersistentAngerSaveData((ServerLevel) this.level(), compoundTag);
 	}
 
+	@Override
 	public void setTarget(@Nullable LivingEntity target) {
 		if (this.getTarget() == null && target != null) {
 			this.ticksUntilNextAlert = ALERT_INTERVAL.sample(this.random);
@@ -154,32 +162,42 @@ public class Survivor extends AgeableMob implements NeutralMob {
 	}
 
 	protected void updateNoActionTime() {
-		int brightness = this.level.getRawBrightness(this.blockPosition(), 0);
+		int brightness = this.level().getRawBrightness(this.blockPosition(), 0);
 		if (brightness > 7) {
 			this.noActionTime += 2;
 		}
 	}
 
+	@Override
 	public void aiStep() {
 		this.updateSwingTime();
 		this.updateNoActionTime();
-		if (getMainHandItem().isEdible() && getHealth() < getMaxHealth()) {
-			eat(level, getMainHandItem());
+
+		// Heal with food if health is low
+		ItemStack mainHandItem = this.getMainHandItem();
+		if (mainHandItem.isEdible() && this.getHealth() < this.getMaxHealth() && this.canEat(true)) {
+			this.eat(this.level(), mainHandItem);
 		}
+
 		super.aiStep();
 	}
 
+	private boolean canEat(boolean b) {
+		return true;
+	}
+
+	@Override
 	protected void customServerAiStep() {
-		AttributeInstance modifiableattributeinstance = this.getAttribute(Attributes.MOVEMENT_SPEED);
+		AttributeInstance movementSpeed = this.getAttribute(Attributes.MOVEMENT_SPEED);
 		if (this.isAngry()) {
-			if (!this.isBaby() && !modifiableattributeinstance.hasModifier(SPEED_MODIFIER_ATTACKING)) {
-				modifiableattributeinstance.addTransientModifier(SPEED_MODIFIER_ATTACKING);
+			if (!this.isBaby() && !movementSpeed.hasModifier(SPEED_MODIFIER_ATTACKING)) {
+				movementSpeed.addTransientModifier(SPEED_MODIFIER_ATTACKING);
 			}
-		} else if (modifiableattributeinstance.hasModifier(SPEED_MODIFIER_ATTACKING)) {
-			modifiableattributeinstance.removeModifier(SPEED_MODIFIER_ATTACKING);
+		} else if (movementSpeed.hasModifier(SPEED_MODIFIER_ATTACKING)) {
+			movementSpeed.removeModifier(SPEED_MODIFIER_ATTACKING);
 		}
 
-		this.updatePersistentAnger((ServerLevel)this.level, true);
+		this.updatePersistentAnger((ServerLevel)this.level(), true);
 		if (this.getTarget() != null) {
 			this.maybeAlertOthers();
 		}
@@ -187,6 +205,8 @@ public class Survivor extends AgeableMob implements NeutralMob {
 		if (this.isAngry()) {
 			this.lastHurtByPlayerTime = this.tickCount;
 		}
+
+		super.customServerAiStep();
 	}
 
 	private void maybeAlertOthers() {
@@ -201,19 +221,22 @@ public class Survivor extends AgeableMob implements NeutralMob {
 	}
 
 	private void alertOthers() {
-		double d0 = this.getAttributeValue(Attributes.FOLLOW_RANGE);
-		AABB axisalignedbb = AABB.unitCubeFromLowerCorner(this.position()).inflate(d0, 10.0D, d0);
-		this.level.getEntitiesOfClass(Survivor.class, axisalignedbb).stream()
-				.filter((survivor) -> survivor != this)
-				.filter((survivor) -> survivor.getTarget() == null)
-				.filter((survivor) -> !survivor.isAlliedTo(this.getTarget()))
-				.forEach((survivor) -> survivor.setTarget(this.getTarget()));
+		double followRange = this.getAttributeValue(Attributes.FOLLOW_RANGE);
+		AABB alertArea = new AABB(this.getX() - followRange, this.getY() - 10.0D, this.getZ() - followRange,
+				this.getX() + followRange, this.getY() + 10.0D, this.getZ() + followRange);
+
+		List<Survivor> nearbySurvivors = this.level().getEntitiesOfClass(Survivor.class, alertArea);
+		for (Survivor survivor : nearbySurvivors) {
+			if (survivor != this && survivor.getTarget() == null && !survivor.isAlliedTo(this.getTarget())) {
+				survivor.setTarget(this.getTarget());
+			}
+		}
 	}
 
-	// Fixed: Changed method signature for 1.19.2
-	protected void populateDefaultEquipmentSlots(@NotNull RandomSource randomSource, DifficultyInstance difficulty) {
+	@Override
+	protected void populateDefaultEquipmentSlots(@NotNull RandomSource randomSource, @NotNull DifficultyInstance difficulty) {
 		super.populateDefaultEquipmentSlots(randomSource, difficulty);
-		if (this.random.nextFloat() < (this.level.getDifficulty() == Difficulty.HARD ? 0.45F : 0.20F)) {
+		if (this.random.nextFloat() < (this.level().getDifficulty() == Difficulty.HARD ? 0.45F : 0.20F)) {
 			int i = this.random.nextInt(3);
 
 			if (i == 0) {
@@ -235,71 +258,82 @@ public class Survivor extends AgeableMob implements NeutralMob {
 	}
 
 	@Nullable
-	public SpawnGroupData finalizeSpawn(ServerLevelAccessor serverLevelAccessor, DifficultyInstance difficulty, MobSpawnType spawnType, @Nullable SpawnGroupData spawnGroupData, @Nullable CompoundTag compoundTag) {
+	@Override
+	public SpawnGroupData finalizeSpawn(@NotNull ServerLevelAccessor serverLevelAccessor, @NotNull DifficultyInstance difficulty, @NotNull MobSpawnType spawnType, @Nullable SpawnGroupData spawnGroupData, @Nullable CompoundTag compoundTag) {
 		float f = difficulty.getSpecialMultiplier();
 		this.setCanPickUpLoot(this.random.nextFloat() < 0.55F * f);
 
 		if (spawnGroupData == null) {
-			spawnGroupData = new Survivor.GroupData(true, true, serverLevelAccessor.getRandom().nextFloat() < 0.40D ? 1 : 0);
+			boolean shouldSpawnBaby = serverLevelAccessor.getRandom().nextFloat() < 0.05F;
+			int type = serverLevelAccessor.getRandom().nextFloat() < 0.40F ? 1 : 0;
+			spawnGroupData = new Survivor.GroupData(true, shouldSpawnBaby, type);
 		}
 
-		GroupData survivorGroupData = (GroupData) spawnGroupData;
-		this.setSurvivorType(survivorGroupData.Type);
+		if (spawnGroupData instanceof GroupData survivorGroupData) {
+			this.setSurvivorType(survivorGroupData.type);
 
-		if (survivorGroupData.canSpawnJockey) {
-			if (serverLevelAccessor.getRandom().nextFloat() < 0.05D) {
-				List<Horse> list = serverLevelAccessor.getEntitiesOfClass(Horse.class, this.getBoundingBox().inflate(5.0D, 3.0D, 5.0D), EntitySelector.ENTITY_NOT_BEING_RIDDEN);
-				if (!list.isEmpty()) {
-					Horse horse = list.get(0);
-					horse.setTamed(true);
-					this.startRiding(horse);
+			if (survivorGroupData.canSpawnJockey) {
+				if (serverLevelAccessor.getRandom().nextFloat() < 0.05D) {
+					List<Horse> nearbyHorses = serverLevelAccessor.getEntitiesOfClass(Horse.class,
+							this.getBoundingBox().inflate(5.0D, 3.0D, 5.0D), EntitySelector.ENTITY_NOT_BEING_RIDDEN);
+
+					if (!nearbyHorses.isEmpty()) {
+						Horse horse = nearbyHorses.get(0);
+						horse.setTamed(true);
+						horse.setOwnerUUID(this.getUUID());
+						this.startRiding(horse);
+					}
+				} else if (serverLevelAccessor.getRandom().nextFloat() < 0.05D) {
+					Horse horse = EntityType.HORSE.create(this.level());
+					if (horse != null) {
+						horse.moveTo(this.getX(), this.getY(), this.getZ(), this.getYRot(), 0.0F);
+						horse.finalizeSpawn(serverLevelAccessor, difficulty, MobSpawnType.JOCKEY, null, null);
+						horse.setTamed(true);
+						horse.setOwnerUUID(this.getUUID());
+						this.startRiding(horse);
+						serverLevelAccessor.addFreshEntity(horse);
+					}
 				}
-			} else if (serverLevelAccessor.getRandom().nextFloat() < 0.05D) {
-				Horse horse1 = EntityType.HORSE.create(this.level);
-				if (horse1 != null) {
-					horse1.moveTo(this.getX(), this.getY(), this.getZ(), this.getYRot(), 0.0F);
-					horse1.finalizeSpawn(serverLevelAccessor, difficulty, MobSpawnType.JOCKEY, null, null);
-					horse1.setTamed(true);
-					this.startRiding(horse1);
-					serverLevelAccessor.addFreshEntity(horse1);
-				}
+			}
+
+			if (survivorGroupData.isShouldSpawnBaby() && this.random.nextFloat() <= 0.05F) {
+				this.setAge(-24000);
 			}
 		}
 
-		if (survivorGroupData.isShouldSpawnBaby() && this.random.nextFloat() <= survivorGroupData.getBabySpawnChance()) {
-			this.setAge(-24000);
-			this.setBaby(true);
-		}
-
-		populateDefaultEquipmentSlots(this.getRandom(), difficulty);
+		this.populateDefaultEquipmentSlots(this.getRandom(), difficulty);
 		return super.finalizeSpawn(serverLevelAccessor, difficulty, spawnType, spawnGroupData, compoundTag);
 	}
 
-	protected void dropCustomDeathLoot(DamageSource damageSource, int looting, boolean hitByPlayer) {
+	@Override
+	protected void dropCustomDeathLoot(@NotNull DamageSource damageSource, int looting, boolean hitByPlayer) {
 		super.dropCustomDeathLoot(damageSource, looting, hitByPlayer);
 		Entity entity = damageSource.getEntity();
 		if (entity instanceof Creeper creeper) {
 			if (creeper.canDropMobsSkull()) {
-				ItemStack itemstack = this.getSkull();
-				if (!itemstack.isEmpty()) {
+				ItemStack skull = this.getSkull();
+				if (!skull.isEmpty()) {
 					creeper.increaseDroppedSkulls();
-					this.spawnAtLocation(itemstack);
+					this.spawnAtLocation(skull);
 				}
 			}
 		}
 	}
 
 	protected ItemStack getSkull() {
-		return new ItemStack(Items.PLAYER_HEAD, 1);
+		return new ItemStack(Items.PLAYER_HEAD);
 	}
 
+	@Override
 	public MobType getMobType() {
 		return MobType.UNDEFINED;
 	}
 
 	@Override
-	protected SoundEvent getHurtSound(DamageSource ds) {
-		if (getSurvivorType() >= 1) return Registration.HURT_SURVIVOR_FEMALE.get();
+	protected SoundEvent getHurtSound(@NotNull DamageSource ds) {
+		if (getSurvivorType() >= 1) {
+			return Registration.HURT_SURVIVOR_FEMALE.get();
+		}
 		return Registration.HURT_SURVIVOR.get();
 	}
 
@@ -308,33 +342,38 @@ public class Survivor extends AgeableMob implements NeutralMob {
 		return SoundEvents.PLAYER_DEATH;
 	}
 
+	@Override
 	protected void registerGoals() {
-		this.goalSelector.addGoal(1, new FloatGoal(this));
-		this.goalSelector.addGoal(8, new RandomLookAroundGoal(this));
-		this.goalSelector.addGoal(10, new LookAtPlayerGoal(this, Player.class, 8.0F));
-		this.goalSelector.addGoal(5, new MeleeAttackGoal(this, 1.0D, false));
-		this.goalSelector.addGoal(8, new WaterAvoidingRandomStrollGoal(this, 1.0D));
-		this.targetSelector.addGoal(1, (new HurtByTargetGoal(this)).setAlertOthers());
+		this.goalSelector.addGoal(0, new FloatGoal(this));
+		this.goalSelector.addGoal(1, new MeleeAttackGoal(this, 1.0D, false));
+		this.goalSelector.addGoal(2, new WaterAvoidingRandomStrollGoal(this, 1.0D));
+		this.goalSelector.addGoal(3, new LookAtPlayerGoal(this, Player.class, 8.0F));
+		this.goalSelector.addGoal(4, new RandomLookAroundGoal(this));
+
+		this.targetSelector.addGoal(1, new HurtByTargetGoal(this).setAlertOthers());
 		this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, 10, true, false, this::isAngryAt));
 		this.targetSelector.addGoal(3, new ResetUniversalAngerTargetGoal<>(this, true));
-		if (random.nextFloat() < 0.5F)
-			this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, Zombie.class, true));
-		else
-			this.targetSelector.addGoal(3, new PanicGoal(this, 1.2D));
+
+		if (random.nextFloat() < 0.5F) {
+			this.targetSelector.addGoal(4, new NearestAttackableTargetGoal<>(this, Zombie.class, true));
+		} else {
+			this.targetSelector.addGoal(4, new PanicGoal(this, 1.2D));
+		}
 	}
 
+	@Override
 	public double getMyRidingOffset() {
 		return this.isBaby() ? 0.0D : -0.45D;
 	}
 
 	public static class GroupData extends AgeableMob.AgeableMobGroupData {
 		public final boolean canSpawnJockey;
-		public final int Type;
+		public final int type;
 
 		public GroupData(boolean canSpawnJockey, boolean shouldSpawnBaby, int type) {
 			super(shouldSpawnBaby);
 			this.canSpawnJockey = canSpawnJockey;
-			this.Type = type;
+			this.type = type;
 		}
 	}
 
@@ -342,55 +381,63 @@ public class Survivor extends AgeableMob implements NeutralMob {
 		return Mob.createMobAttributes()
 				.add(Attributes.FOLLOW_RANGE, 30.0D)
 				.add(Attributes.MOVEMENT_SPEED, 0.3D)
-				.add(Attributes.ATTACK_DAMAGE, 3D)
+				.add(Attributes.ATTACK_DAMAGE, 3.0D)
 				.add(Attributes.ARMOR, 0.0D)
-				.add(Attributes.SPAWN_REINFORCEMENTS_CHANCE)
-				.add(Attributes.MAX_HEALTH, 20D);
+				.add(Attributes.SPAWN_REINFORCEMENTS_CHANCE, 0.0D)
+				.add(Attributes.MAX_HEALTH, 20.0D);
 	}
 
+	// Client-side renderer classes
+	@OnlyIn(Dist.CLIENT)
 	public static class SurvivorModel<S extends Survivor> extends HumanoidModel<S> {
-		public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(new ResourceLocation(ZombiesMore.MODID, name), "main");
+		public static final ModelLayerLocation LAYER_LOCATION =
+				new ModelLayerLocation(new ResourceLocation(ZombiesMore.MODID, NAME), "main");
 
 		public SurvivorModel(ModelPart modelPart) {
 			super(modelPart);
 		}
 
 		@Override
-		public void renderToBuffer(PoseStack poseStack, VertexConsumer vertexConsumer, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
+		public void renderToBuffer(@NotNull PoseStack poseStack, @NotNull VertexConsumer vertexConsumer,
+								   int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
 			super.renderToBuffer(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
 		}
 	}
 
+	@OnlyIn(Dist.CLIENT)
 	public static class SurvivorRenderer extends HumanoidMobRenderer<Survivor, SurvivorModel<Survivor>> {
-		int type = 0;
-		SurvivorModel<Survivor> slim;
-		SurvivorModel<Survivor> normal;
+		private static final ResourceLocation MALE_TEXTURE = new ResourceLocation(ZombiesMore.MODID, "textures/entity/survivor_0.png");
+		private static final ResourceLocation FEMALE_TEXTURE = new ResourceLocation(ZombiesMore.MODID, "textures/entity/survivor_1.png");
+
+		private final SurvivorModel<Survivor> normalModel;
+		private final SurvivorModel<Survivor> slimModel;
 
 		public SurvivorRenderer(EntityRendererProvider.Context context) {
-			this(context, ModelLayers.PLAYER, ModelLayers.PLAYER_INNER_ARMOR, ModelLayers.PLAYER_OUTER_ARMOR);
-			this.slim = new SurvivorModel<>(context.bakeLayer(ModelLayers.PLAYER_SLIM));
-			this.normal = this.getModel();
-		}
+			super(context, new SurvivorModel<>(context.bakeLayer(ModelLayers.PLAYER)), 0.5F);
 
-		public SurvivorRenderer(EntityRendererProvider.Context context, ModelLayerLocation layerLocation, ModelLayerLocation innerLayerLocation, ModelLayerLocation outerLayerLocation) {
-			super(context, new SurvivorModel<>(context.bakeLayer(layerLocation)), 0.5F);
-			this.addLayer(new HumanoidArmorLayer<>(this, new SurvivorModel<>(context.bakeLayer(innerLayerLocation)), new SurvivorModel<>(context.bakeLayer(outerLayerLocation))));
+			this.normalModel = this.getModel();
+			this.slimModel = new SurvivorModel<>(context.bakeLayer(ModelLayers.PLAYER_SLIM));
+
+			this.addLayer(new HumanoidArmorLayer<>(this,
+					new HumanoidModel<>(context.bakeLayer(ModelLayers.PLAYER_INNER_ARMOR)),
+					new HumanoidModel<>(context.bakeLayer(ModelLayers.PLAYER_OUTER_ARMOR)),
+					context.getModelManager()));
 		}
 
 		@Override
-		public void render(Survivor survivor, float entityYaw, float partialTicks, PoseStack poseStack, MultiBufferSource buffer, int packedLight) {
-			type = survivor.getSurvivorType();
-			if (type >= 1)
-				model = slim;
-			else
-				model = normal;
+		public void render(Survivor survivor, float entityYaw, float partialTicks,
+						   PoseStack poseStack, MultiBufferSource buffer, int packedLight) {
+			// Switch between normal and slim model based on survivor type
+			int type = survivor.getSurvivorType();
+			this.model = (type >= 1) ? slimModel : normalModel;
 
 			super.render(survivor, entityYaw, partialTicks, poseStack, buffer, packedLight);
 		}
 
 		@Override
 		public ResourceLocation getTextureLocation(Survivor entity) {
-			return new ResourceLocation(ZombiesMore.MODID, "textures/entity/" + name + "_" + type + ".png");
+			int type = entity.getSurvivorType();
+			return (type >= 1) ? FEMALE_TEXTURE : MALE_TEXTURE;
 		}
 	}
 }

@@ -4,7 +4,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.LazyLoadedValue;
-import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ArmorMaterial;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
@@ -15,11 +15,11 @@ import me.yamikingg.zombiesmore.ZombiesMore;
 import java.util.function.Supplier;
 
 public enum DiscoGlassesMaterial implements ArmorMaterial {
-    GLASSES("glasses", 5, new int[]{1, 2, 3, 1}, 15, SoundEvents.ARMOR_EQUIP_GENERIC, 0.0F, 0.0F, () -> {
+    GLASSES("glasses", 5, new int[]{1, 3, 2, 1}, 15, SoundEvents.ARMOR_EQUIP_GENERIC, 0.0F, 0.0F, () -> {
         return Ingredient.of(Items.GLASS);
     });
 
-    private static final int[] HEALTH_PER_SLOT = new int[]{13, 15, 16, 11};
+    private static final int[] HEALTH_PER_SLOT = new int[]{11, 16, 15, 13};
     private final String name;
     private final int durabilityMultiplier;
     private final int[] slotProtections;
@@ -29,23 +29,25 @@ public enum DiscoGlassesMaterial implements ArmorMaterial {
     private final float knockbackResistance;
     private final LazyLoadedValue<Ingredient> repairIngredient;
 
-    private DiscoGlassesMaterial(String p_i231593_3_, int p_i231593_4_, int[] p_i231593_5_, int p_i231593_6_, SoundEvent p_i231593_7_, float p_i231593_8_, float p_i231593_9_, Supplier<Ingredient> p_i231593_10_) {
-        this.name = p_i231593_3_;
-        this.durabilityMultiplier = p_i231593_4_;
-        this.slotProtections = p_i231593_5_;
-        this.enchantmentValue = p_i231593_6_;
-        this.sound = p_i231593_7_;
-        this.toughness = p_i231593_8_;
-        this.knockbackResistance = p_i231593_9_;
-        this.repairIngredient = new LazyLoadedValue<>(p_i231593_10_);
+    private DiscoGlassesMaterial(String name, int durabilityMultiplier, int[] slotProtections, int enchantmentValue, SoundEvent sound, float toughness, float knockbackResistance, Supplier<Ingredient> repairIngredient) {
+        this.name = name;
+        this.durabilityMultiplier = durabilityMultiplier;
+        this.slotProtections = slotProtections;
+        this.enchantmentValue = enchantmentValue;
+        this.sound = sound;
+        this.toughness = toughness;
+        this.knockbackResistance = knockbackResistance;
+        this.repairIngredient = new LazyLoadedValue<>(repairIngredient);
     }
 
-    public int getDurabilityForSlot(EquipmentSlot p_200896_1_) {
-        return HEALTH_PER_SLOT[p_200896_1_.getIndex()] * this.durabilityMultiplier;
+    @Override
+    public int getDurabilityForType(ArmorItem.Type type) {
+        return HEALTH_PER_SLOT[type.getSlot().getIndex()] * this.durabilityMultiplier;
     }
 
-    public int getDefenseForSlot(EquipmentSlot p_200902_1_) {
-        return this.slotProtections[p_200902_1_.getIndex()];
+    @Override
+    public int getDefenseForType(ArmorItem.Type type) {
+        return this.slotProtections[type.ordinal()];
     }
 
     public int getEnchantmentValue() {
@@ -62,7 +64,7 @@ public enum DiscoGlassesMaterial implements ArmorMaterial {
 
     @OnlyIn(Dist.CLIENT)
     public String getName() {
-        return new ResourceLocation(ZombiesMore.MODID,this.name).toString();
+        return new ResourceLocation(ZombiesMore.MODID, this.name).toString();
     }
 
     public float getToughness() {

@@ -44,11 +44,7 @@ public class ClientEvents {
 	public static void registerLayerDefinition(EntityRenderersEvent.RegisterLayerDefinitions event) {
 
 		ImmutableMap.Builder<ModelLayerLocation, LayerDefinition> builder = ImmutableMap.builder();
-/*
-          event.registerLayerDefinition(TUTORIAL_PIG_LAYER, TutorialPigModel::createBodyLayer);
-        // event.registerLayerDefinition(TUTORIAL_HORSE_LAYER, TutorialHorseModel::createMesh);
-        builder.put(HORSEE, ModlayerTutorialHorse);
-        */
+
 		event.registerLayerDefinition(ZombieDwarf.ZombieDwarfModel.DWARF, () -> ZombieDwarf.ZombieDwarfModel.createBodyLayer(new CubeDeformation(0), 64));
 		event.registerLayerDefinition(ZombieDwarf.ZombieDwarfModel.DWARF_INNER, () -> ZombieDwarf.ZombieDwarfModel.createBodyLayer(new CubeDeformation(0.5F), 32));
 		event.registerLayerDefinition(ZombieDwarf.ZombieDwarfModel.DWARF_OUTER, () -> ZombieDwarf.ZombieDwarfModel.createBodyLayer(new CubeDeformation(1F), 32));

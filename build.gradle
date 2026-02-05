@@ -24,7 +24,7 @@ java.toolchain.languageVersion = JavaLanguageVersion.of(17)
 
 minecraft {
     // Change from property-based to direct Parchment mapping
-    mappings channel: 'parchment', version: '2022.11.27-1.19.2'
+    mappings channel: 'parchment', version: '2023.09.03-1.20.1'
     // OR if you want to keep it dynamic in gradle.properties:
     // mappings channel: "${mappings_channel}", version: "${parchment_version}"
 
