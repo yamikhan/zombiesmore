@@ -6,7 +6,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.CreativeModeTab;
@@ -98,6 +97,9 @@ public class Registration {
 	public static final RegistryObject<EntityType<ZombieCreeper>> ZOMBIE_CREEPER = ENTITIES.register(ZombieCreeper.NAME, () -> EntityType.Builder.of(ZombieCreeper::new, MobCategory.MONSTER).sized(0.6f, 1.51f).build(ZombieCreeper.NAME));
 	public static final RegistryObject<Item> ZOMBIE_CREEPER_SPAWN_EGG = ITEMS.register(ZombieCreeper.NAME + "_spawn_egg", () -> new ForgeSpawnEggItem(ZOMBIE_CREEPER, -16724992, -16724788, new Item.Properties()));
 
+	public static final RegistryObject<EntityType<ZombieEvoker>> ZOMBIE_EVOKER = ENTITIES.register(ZombieEvoker.NAME, () -> EntityType.Builder.of(ZombieEvoker::new, MobCategory.MONSTER).sized(0.6f, 1.95f).clientTrackingRange(8).build(ZombieEvoker.NAME));
+	public static final RegistryObject<Item> ZOMBIE_EVOKER_SPAWN_EGG = ITEMS.register(ZombieEvoker.NAME + "_spawn_egg", () -> new ForgeSpawnEggItem(ZOMBIE_EVOKER, -16724992, -13369600, new Item.Properties()));
+
 	// Creative Mode Tab
 	public static final RegistryObject<CreativeModeTab> ITEM_GROUP = CREATIVE_MODE_TABS.register("item_group",
 			() -> CreativeModeTab.builder()
@@ -120,6 +122,7 @@ public class Registration {
 						output.accept(DWARF_SPAWN_EGG.get());
 						output.accept(NETHER_ZOMBIE_SPAWN_EGG.get());
 						output.accept(ZOMBIE_CREEPER_SPAWN_EGG.get());
+						output.accept(ZOMBIE_EVOKER_SPAWN_EGG.get());
 					})
 					.build()
 	);
@@ -140,5 +143,6 @@ public class Registration {
 		event.put(NETHER_ZOMBIE.get(), DiscoZombie.createAttributes().build());
 		event.put(SURVIVOR.get(), Survivor.createAttributes().build());
 		event.put(ZOMBIE_CREEPER.get(), ZombieCreeper.createAttributes().build());
+		event.put(ZOMBIE_EVOKER.get(), ZombieEvoker.createAttributes().build());
 	}
 }

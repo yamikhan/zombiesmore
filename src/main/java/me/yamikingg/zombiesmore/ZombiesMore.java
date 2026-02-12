@@ -108,6 +108,11 @@ public class ZombiesMore {
 					Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
 					Survivor::checkMobSpawnRules);
 
+			SpawnPlacements.register(Registration.ZOMBIE_EVOKER.get(),
+					SpawnPlacements.Type.ON_GROUND,
+					Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
+					Survivor::checkMobSpawnRules);
+
 			LOGGER.info("Spawn placements registered successfully!");
 		});
 	}
@@ -157,6 +162,8 @@ public class ZombiesMore {
 				me.yamikingg.zombiesmore.entity.Survivor.createAttributes().build());
 		event.put(Registration.ZOMBIE_NOTCH.get(),
 				me.yamikingg.zombiesmore.entity.ZombieNotch.createAttributes().build());
+		event.put(Registration.ZOMBIE_EVOKER.get(),
+				me.yamikingg.zombiesmore.entity.ZombieEvoker.createAttributes().build());
 
 		LOGGER.info("Entity attributes registered successfully!");
 	}

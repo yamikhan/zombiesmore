@@ -6,7 +6,10 @@ import me.yamikingg.zombiesmore.entity.*;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.builders.CubeDeformation;
 import net.minecraft.client.model.geom.builders.LayerDefinition;
+import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.Entity;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.EntityRenderersEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -39,6 +42,12 @@ public class ClientEvents {
 		event.registerEntityRenderer(Registration.SURVIVOR.get(), Survivor.SurvivorRenderer::new);
 		event.registerEntityRenderer(Registration.ZOMBIE_CREEPER.get(), ZombieCreeper.CreeperRenderer::new);
 		event.registerEntityRenderer(Registration.ZOMBIE_DWARF.get(), dwarfRenderFactory);
+		event.registerEntityRenderer(Registration.ZOMBIE_EVOKER.get(), manager -> new net.minecraft.client.renderer.entity.EvokerRenderer(manager){
+			@Override
+			public ResourceLocation getTextureLocation(Entity entity) {
+				return new ResourceLocation(ZombiesMore.MODID, "textures/entity/zombie_evoker.png");
+			}
+		});
 	}
 	@SubscribeEvent
 	public static void registerLayerDefinition(EntityRenderersEvent.RegisterLayerDefinitions event) {
