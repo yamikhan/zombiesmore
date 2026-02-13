@@ -3,11 +3,13 @@ package me.yamikingg.zombiesmore;
 import me.yamikingg.zombiesmore.entity.AbstractMoZombie;
 import me.yamikingg.zombiesmore.entity.Survivor;
 import me.yamikingg.zombiesmore.entity.ZombieCreeper;
+import me.yamikingg.zombiesmore.events.TotemEventHandler;
 import me.yamikingg.zombiesmore.init.Registration;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.SpawnPlacements;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.level.levelgen.Heightmap;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.EntityAttributeCreationEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -30,8 +32,10 @@ public class ZombiesMore {
 		modEventBus.addListener(this::commonSetup);
 		modEventBus.addListener(this::registerAttributes);
 
-		// Initialize registration
 		Registration.init(modEventBus);
+
+		net.minecraftforge.common.MinecraftForge.EVENT_BUS.register(this);
+		net.minecraftforge.common.MinecraftForge.EVENT_BUS.register(new TotemEventHandler());
 
 		// Load config
 		Config.register();

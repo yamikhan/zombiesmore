@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "zombiesmore_yamikingg:item/totem_of_amulets"
+  }
+}

@@ -1,6 +1,7 @@
 package me.yamikingg.zombiesmore.init;
 
 import me.yamikingg.zombiesmore.entity.*;
+import me.yamikingg.zombiesmore.item.TotemOfAmulets;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -27,22 +28,21 @@ import java.util.function.Supplier;
 
 public class Registration {
 
-	private static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, ZombiesMore.MODID);
+	public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, ZombiesMore.MODID);
 	private static final DeferredRegister<SoundEvent> SOUNDS = DeferredRegister.create(ForgeRegistries.SOUND_EVENTS, ZombiesMore.MODID);
 	public static final DeferredRegister<EntityType<?>> ENTITIES = DeferredRegister.create(ForgeRegistries.ENTITY_TYPES, ZombiesMore.MODID);
 	private static final DeferredRegister<CreativeModeTab> CREATIVE_MODE_TABS = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, ZombiesMore.MODID);
 
 	public static void init(IEventBus modEventBus) {
-		ENTITIES.register(modEventBus);  // ✅ CORRECT
+		ENTITIES.register(modEventBus);
 		SOUNDS.register(modEventBus);
 		ITEMS.register(modEventBus);
 		CREATIVE_MODE_TABS.register(modEventBus);
 	}
 
-	// CHANGED: EquipmentSlot is now an enum in the ArmorItem.Type class
 	public static final RegistryObject<Item> DISCO_GLASSES = ITEMS.register("disco_glasses", () -> new ArmorItem(DiscoGlassesMaterial.GLASSES, ArmorItem.Type.HELMET, new Item.Properties()));
+	public static final RegistryObject<Item> TOTEM_OF_AMULETS = ITEMS.register("totem_of_amulets", () -> new Item(new Item.Properties()));
 
-	// CHANGED: SoundEvent constructor now uses ResourceLocation directly
 	public static final RegistryObject<SoundEvent> HURT_SURVIVOR = SOUNDS.register("hurt_survivor", () -> SoundEvent.createVariableRangeEvent(new ResourceLocation(ZombiesMore.MODID, "hurt_survivor")));
 	public static final RegistryObject<SoundEvent> HURT_SURVIVOR_FEMALE = SOUNDS.register("hurt_survivor_female", () -> SoundEvent.createVariableRangeEvent(new ResourceLocation(ZombiesMore.MODID, "hurt_survivor_female")));
 
@@ -107,6 +107,7 @@ public class Registration {
 					.icon(() -> new ItemStack(DISCO_GLASSES.get()))
 					.displayItems((parameters, output) -> {
 						output.accept(DISCO_GLASSES.get());
+						output.accept(TOTEM_OF_AMULETS.get());
 						output.accept(GIANT_SPAWN_EGG.get());
 						output.accept(SURVIVOR_SPAWN_EGG.get());
 						output.accept(DISCO_SPAWN_EGG.get());
