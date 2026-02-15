@@ -3,16 +3,11 @@ package me.yamikingg.zombiesmore;
 import me.yamikingg.zombiesmore.entity.AbstractMoZombie;
 import me.yamikingg.zombiesmore.entity.Survivor;
 import me.yamikingg.zombiesmore.entity.ZombieCreeper;
-import me.yamikingg.zombiesmore.events.TotemEventHandler;
 import me.yamikingg.zombiesmore.init.Registration;
-import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.SpawnPlacements;
-import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.level.levelgen.Heightmap;
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.EntityAttributeCreationEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
@@ -35,8 +30,6 @@ public class ZombiesMore {
 		Registration.init(modEventBus);
 
 		net.minecraftforge.common.MinecraftForge.EVENT_BUS.register(this);
-		net.minecraftforge.common.MinecraftForge.EVENT_BUS.register(new TotemEventHandler());
-
 		// Load config
 		Config.register();
 		Config.loadConfig(Config.CLIENT_CONFIG, FMLPaths.CONFIGDIR.get().resolve(MODID + "-client.toml"));
@@ -112,10 +105,6 @@ public class ZombiesMore {
 					Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
 					Survivor::checkMobSpawnRules);
 
-			SpawnPlacements.register(Registration.ZOMBIE_EVOKER.get(),
-					SpawnPlacements.Type.ON_GROUND,
-					Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
-					Survivor::checkMobSpawnRules);
 
 			LOGGER.info("Spawn placements registered successfully!");
 		});
@@ -166,8 +155,6 @@ public class ZombiesMore {
 				me.yamikingg.zombiesmore.entity.Survivor.createAttributes().build());
 		event.put(Registration.ZOMBIE_NOTCH.get(),
 				me.yamikingg.zombiesmore.entity.ZombieNotch.createAttributes().build());
-		event.put(Registration.ZOMBIE_EVOKER.get(),
-				me.yamikingg.zombiesmore.entity.ZombieEvoker.createAttributes().build());
 
 		LOGGER.info("Entity attributes registered successfully!");
 	}

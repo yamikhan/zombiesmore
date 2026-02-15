@@ -1,7 +1,6 @@
 package me.yamikingg.zombiesmore.init;
 
 import me.yamikingg.zombiesmore.entity.*;
-import me.yamikingg.zombiesmore.item.TotemOfAmulets;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -16,14 +15,11 @@ import net.minecraftforge.common.ForgeSpawnEggItem;
 import net.minecraftforge.event.entity.EntityAttributeCreationEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 import me.yamikingg.zombiesmore.ZombiesMore;
 import me.yamikingg.zombiesmore.item.DiscoGlassesMaterial;
-
-import java.util.function.Supplier;
 
 
 public class Registration {
@@ -41,8 +37,6 @@ public class Registration {
 	}
 
 	public static final RegistryObject<Item> DISCO_GLASSES = ITEMS.register("disco_glasses", () -> new ArmorItem(DiscoGlassesMaterial.GLASSES, ArmorItem.Type.HELMET, new Item.Properties()));
-	public static final RegistryObject<Item> TOTEM_OF_AMULETS = ITEMS.register("totem_of_amulets", () -> new Item(new Item.Properties()));
-
 	public static final RegistryObject<SoundEvent> HURT_SURVIVOR = SOUNDS.register("hurt_survivor", () -> SoundEvent.createVariableRangeEvent(new ResourceLocation(ZombiesMore.MODID, "hurt_survivor")));
 	public static final RegistryObject<SoundEvent> HURT_SURVIVOR_FEMALE = SOUNDS.register("hurt_survivor_female", () -> SoundEvent.createVariableRangeEvent(new ResourceLocation(ZombiesMore.MODID, "hurt_survivor_female")));
 
@@ -97,17 +91,13 @@ public class Registration {
 	public static final RegistryObject<EntityType<ZombieCreeper>> ZOMBIE_CREEPER = ENTITIES.register(ZombieCreeper.NAME, () -> EntityType.Builder.of(ZombieCreeper::new, MobCategory.MONSTER).sized(0.6f, 1.51f).build(ZombieCreeper.NAME));
 	public static final RegistryObject<Item> ZOMBIE_CREEPER_SPAWN_EGG = ITEMS.register(ZombieCreeper.NAME + "_spawn_egg", () -> new ForgeSpawnEggItem(ZOMBIE_CREEPER, -16724992, -16724788, new Item.Properties()));
 
-	public static final RegistryObject<EntityType<ZombieEvoker>> ZOMBIE_EVOKER = ENTITIES.register(ZombieEvoker.NAME, () -> EntityType.Builder.of(ZombieEvoker::new, MobCategory.MONSTER).sized(0.6f, 1.95f).clientTrackingRange(8).build(ZombieEvoker.NAME));
-	public static final RegistryObject<Item> ZOMBIE_EVOKER_SPAWN_EGG = ITEMS.register(ZombieEvoker.NAME + "_spawn_egg", () -> new ForgeSpawnEggItem(ZOMBIE_EVOKER, -16724992, -13369600, new Item.Properties()));
 
-	// Creative Mode Tab
 	public static final RegistryObject<CreativeModeTab> ITEM_GROUP = CREATIVE_MODE_TABS.register("item_group",
 			() -> CreativeModeTab.builder()
 					.title(Component.translatable("itemGroup." + ZombiesMore.MODID))
 					.icon(() -> new ItemStack(DISCO_GLASSES.get()))
 					.displayItems((parameters, output) -> {
 						output.accept(DISCO_GLASSES.get());
-						output.accept(TOTEM_OF_AMULETS.get());
 						output.accept(GIANT_SPAWN_EGG.get());
 						output.accept(SURVIVOR_SPAWN_EGG.get());
 						output.accept(DISCO_SPAWN_EGG.get());
@@ -123,7 +113,6 @@ public class Registration {
 						output.accept(DWARF_SPAWN_EGG.get());
 						output.accept(NETHER_ZOMBIE_SPAWN_EGG.get());
 						output.accept(ZOMBIE_CREEPER_SPAWN_EGG.get());
-						output.accept(ZOMBIE_EVOKER_SPAWN_EGG.get());
 					})
 					.build()
 	);
@@ -144,6 +133,5 @@ public class Registration {
 		event.put(NETHER_ZOMBIE.get(), DiscoZombie.createAttributes().build());
 		event.put(SURVIVOR.get(), Survivor.createAttributes().build());
 		event.put(ZOMBIE_CREEPER.get(), ZombieCreeper.createAttributes().build());
-		event.put(ZOMBIE_EVOKER.get(), ZombieEvoker.createAttributes().build());
 	}
 }

@@ -42,12 +42,6 @@ public class ClientEvents {
 		event.registerEntityRenderer(Registration.SURVIVOR.get(), Survivor.SurvivorRenderer::new);
 		event.registerEntityRenderer(Registration.ZOMBIE_CREEPER.get(), ZombieCreeper.CreeperRenderer::new);
 		event.registerEntityRenderer(Registration.ZOMBIE_DWARF.get(), dwarfRenderFactory);
-		event.registerEntityRenderer(Registration.ZOMBIE_EVOKER.get(), manager -> new net.minecraft.client.renderer.entity.EvokerRenderer(manager){
-			@Override
-			public ResourceLocation getTextureLocation(Entity entity) {
-				return new ResourceLocation(ZombiesMore.MODID, "textures/entity/zombie_evoker.png");
-			}
-		});
 	}
 	@SubscribeEvent
 	public static void registerLayerDefinition(EntityRenderersEvent.RegisterLayerDefinitions event) {
