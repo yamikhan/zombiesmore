@@ -1,4 +1,16 @@
-# Mo'Zombies Wave![](https://cf.way2muchnoise.eu/444779.svg) ![](https://cf.way2muchnoise.eu/versions/For%20MC_444779_all.svg)
-![](https://imgur.com/a/j972dID.png)
-This is a Minecraft mod, remake of the discontinued Mo' Zombies mod that adds 14 new mobs to the game, including 13 different types of zombies and a player-based mobs.   
-**There is no commercial interest in this project, and it is under the MIT license.**
+This is a port from a forgeting mod in 1.20.1 , i like the project so i want to continue work in it , keep in mind that i will not anything new to it just update it to the newer version , big thanks to [Wilyicaro](https://modrinth.com/mod/mo-zombies-wave) for letting me fork and publish this mod .
+## Mob list:
+-     Survivor
+-     Zombie Notch
+-     Zombie Herobrine
+-     Zombie Dwarf
+-     Zombie Chef
+-     Nether Zombie
+-     Zombie Miner
+-     Zombie King
+-     Zombie Knight
+-     Zombie Pirate
+-     Zombie Pa
+-     Zombie Cyborg
+-     Zombie Creeper
+-     Disco Zombie
