@@ -34,13 +34,13 @@
     },
     {
       "type": "zombiesmore_yamikingg:zombie_herobrine",
-      "weight": 10,
+      "weight": 4,
       "minCount": 1,
       "maxCount": 1
     },
     {
       "type": "zombiesmore_yamikingg:zombie_notch",
-      "weight": 20,
+      "weight": 4,
       "minCount": 1,
       "maxCount": 1
     },

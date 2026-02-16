@@ -24,7 +24,7 @@ java.toolchain.languageVersion = JavaLanguageVersion.of(17)
 
 minecraft {
     // Change from property-based to direct Parchment mapping
-    mappings channel: 'parchment', version: '2023.09.03-1.20.1'
+    mappings channel: 'parchment', version: '2023.12.10-1.20.2'
     // OR if you want to keep it dynamic in gradle.properties:
     // mappings channel: "${mappings_channel}", version: "${parchment_version}"
 
@@ -77,6 +77,21 @@ minecraft {
                 }
             }
         }
+    }
+}
+
+processResources {
+    // This ensures the mod_version property is available during expansion
+    inputs.property "mod_version", project.findProperty('mod_version') ?: '0.2.0'
+
+    filesMatching("META-INF/mods.toml") {
+        // This replaces ${mod_version} with the actual value
+        expand "mod_version": project.findProperty('mod_version') ?: '0.2.0'
+    }
+
+    // This handles any other files that might need expansion
+    filesMatching("**/*.toml") {
+        expand "mod_version": project.findProperty('mod_version') ?: '0.2.0'
     }
 }
 

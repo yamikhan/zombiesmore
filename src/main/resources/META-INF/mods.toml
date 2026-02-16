@@ -1,15 +1,15 @@
 modLoader="javafml"
 loaderVersion="[40,)"  # Updated for 1.18.2 Forge
-license="GNU"
+license="MIT"
 
 [[mods]]
 modId="zombiesmore_yamikingg"
-version="${file.jarVersion}"
+version="${mod_version}"
 displayName="ZombiesMore"
 credits="Original Mo'Zombies concept by coocoo617, remake by Wilyicaro, and then me yamikingg"
 # displayURL=""  # Either remove or use your own URL
 logoFile="logo.png"
-authors="Wilyicaro"
+authors="Yamikingg"
 updateJSONURL=""  # Optional: Add if you have update JSON
 
 description='''

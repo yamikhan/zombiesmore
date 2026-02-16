@@ -44,6 +44,7 @@ import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.phys.AABB;
 import me.yamikingg.zombiesmore.ZombiesMore;
 import me.yamikingg.zombiesmore.init.Registration;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
@@ -194,7 +195,7 @@ public class Survivor extends AgeableMob implements NeutralMob {
 				movementSpeed.addTransientModifier(SPEED_MODIFIER_ATTACKING);
 			}
 		} else if (movementSpeed.hasModifier(SPEED_MODIFIER_ATTACKING)) {
-			movementSpeed.removeModifier(SPEED_MODIFIER_ATTACKING);
+			movementSpeed.removeModifier(SPEED_MODIFIER_ATTACKING.getId());
 		}
 
 		this.updatePersistentAnger((ServerLevel)this.level(), true);
@@ -361,10 +362,31 @@ public class Survivor extends AgeableMob implements NeutralMob {
 		}
 	}
 
+	// ================ UPDATED MOUNTING METHODS FOR 1.20.2 ================
+
 	@Override
-	public double getMyRidingOffset() {
-		return this.isBaby() ? 0.0D : -0.45D;
+	protected void positionRider(Entity pPassenger, Entity.MoveFunction pCallback) {
+		if (this.hasPassenger(pPassenger)) {
+			// Calculate the default Y position (entity's Y + passenger's default offset)
+			double defaultY = this.getY() + this.getPassengersRidingOffset(pPassenger) + pPassenger.getMyRidingOffset(this);
+			// Apply your custom offset: -0.45D for adults, 0.0D for babies
+			double customYOffset = this.isBaby() ? 0.0D : -0.45D;
+
+			// Set the final position with your custom offset
+			pCallback.accept(pPassenger, this.getX(), defaultY + customYOffset, this.getZ());
+		} else {
+			super.positionRider(pPassenger, pCallback);
+		}
 	}
+
+	// Helper method for getting the default passenger offset (optional, but good to have)
+	public double getPassengersRidingOffset(Entity pPassenger) {
+		// You can customize this based on the passenger if needed
+		// For now, return the default from Entity class logic
+		return 0.0D;
+	}
+
+	// ================ END OF UPDATED METHODS ================
 
 	public static class GroupData extends AgeableMob.AgeableMobGroupData {
 		public final boolean canSpawnJockey;
