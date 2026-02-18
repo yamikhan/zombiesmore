@@ -1,0 +1,91 @@
+plugins {
+    id 'net.neoforged.gradle.userdev' version '7.0.72'
+    id 'eclipse'
+    id 'maven-publish'
+}
+
+version = "${minecraft_version}-${mod_version}"
+group = 'yamikingg.zombiesmore_yamikingg' // Keep your package name
+
+base {
+    archivesName = "zombiesmore"
+}
+
+java.toolchain.languageVersion = JavaLanguageVersion.of(17)
+
+runs {
+    configureEach {
+        modSource project.sourceSets.main
+        systemProperty 'neoforge.logging.markers', 'REGISTRIES'
+        systemProperty 'neoforge.logging.console.level', 'debug'
+    }
+
+    client {
+        workingDirectory project.file('run')
+    }
+
+    server {
+        workingDirectory project.file('run')
+    }
+
+    data {
+        workingDirectory project.file('run')
+        programArguments.addAll '--mod', 'zombiesmore_yamikingg', '--all', '--output', file('src/generated/resources/').getAbsolutePath(), '--existing', file('src/main/resources/').getAbsolutePath()
+    }
+}
+
+dependencies {
+    implementation "net.neoforged:neoforge:${neoforge_version}"
+}
+
+repositories {
+    mavenCentral()
+    maven {
+        name = "NeoForged"
+        url = "https://maven.neoforged.net"
+    }
+    // Only keep these if you have dependencies from them
+    maven {
+        name = "Progwml6 maven"
+        url = "https://dvs1.progwml6.com"
+    }
+    maven {
+        name = "ModMaven"
+        url = "https://modmaven.k-4u.nl"
+    }
+    maven {
+        url "https://www.cursemaven.com"
+    }
+    maven {
+        url "https://maven.shedaniel.me"
+    }
+    // REMOVED: maven { url = "https://maven.latmod.com" }
+}
+
+processResources {
+    inputs.property "mod_version", mod_version
+
+    filesMatching("META-INF/mods.toml") {
+        expand "mod_version": mod_version
+    }
+}
+
+sourceSets.main.resources { srcDir 'src/generated/resources' }
+
+jar {
+    manifest {
+        attributes([
+                "Specification-Title"     : "zombiesmore",
+                "Specification-Vendor"    : "yamikingg",
+                "Specification-Version"   : "1",
+                "Implementation-Title"    : project.name,
+                "Implementation-Version"  : "${version}",
+                "Implementation-Vendor"   : "yamikingg",
+                "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
+        ])
+    }
+}
+
+// tasks.named('jar', Jar).configure {
+//     finalizedBy 'reobfJar'
+// }

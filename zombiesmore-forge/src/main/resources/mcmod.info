@@ -1,0 +1,20 @@
+[
+  {
+    "modid": "zombiesmore_yamikingg",
+    "name": "ZombiesMore",
+    "description": " Remake of the outdated mod from version 1.7.10 of the game, adds news zombies to the game,  14 mobs in all",
+    "mod_version": "${mod_version}",
+    "credits": " All credits from creativity go to the original creator, coocoo617.",
+    "logoFile": "logo.png",
+    "mcversion": "${mcversion}",
+    "url": "https://modrinth.com/",
+    "updateUrl": "",
+    "authorList": [
+      "yamikingg"
+    ],
+    "dependencies": [],
+    "dependants": [],
+    "requiredMods": [],
+    "useDependencyInformation": "true"
+  }
+]

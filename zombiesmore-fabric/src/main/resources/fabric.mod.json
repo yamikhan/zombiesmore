@@ -1,0 +1,34 @@
+{
+  "schemaVersion": 1,
+  "id": "zombiesmore_yamikingg",
+  "version": "${version}",
+  "name": "ZombiesMore",
+  "description": "Remake of the original Mo'Zombies mod from Minecraft 1.7.10. Adds various themed zombie variants to the game including: Disco Zombie, Nether Zombie, Zombie Dwarf, Zombie Chef, Zombie Cyborg, Zombie Herobrine, Zombie King, Zombie Knight, Zombie Miner, Zombie PA, Zombie Pirate, Zombie Creeper (Hybrid), Giant (Vanilla enhanced), Survivor (Friendly NPC). Features custom spawn placements and behaviors for each zombie type.",
+  "authors": [
+    "Yamikingg"
+  ],
+  "contact": {
+    "homepage": "",
+    "sources": "",
+    "issues": ""
+  },
+  "license": "MIT",
+  "icon": "assets/zombiesmore_yamikingg/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "me.yamikingg.zombiesmore.ZombiesMoreFabric"
+    ],
+    "client": [
+      "me.yamikingg.zombiesmore.init.ClientEvents"
+    ]
+  },
+  "mixins": [
+    "zombiesmore.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=0.14.0",
+    "fabric-api": "*",
+    "minecraft": "1.20.2"
+  }
+}
