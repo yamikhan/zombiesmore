@@ -22,8 +22,8 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.nbt.CompoundTag;
-import javax.annotation.Nullable;
-import me.yamikingg.zombiesmore.ZombiesMore;
+import org.jetbrains.annotations.Nullable;
+import me.yamikingg.zombiesmore.ZombiesMoreFabric;
 
 public class ZombieDwarf extends AbstractMoZombie {
 	public ZombieDwarf(EntityType<? extends AbstractMoZombie> entityType, Level world) {
@@ -70,7 +70,7 @@ public class ZombieDwarf extends AbstractMoZombie {
 	}
 
 	public static class RendererZombieDwarf extends HumanoidMobRenderer<AbstractMoZombie, ZombieDwarfModel<AbstractMoZombie>> {
-		public final ResourceLocation TEXTURE = new ResourceLocation(ZombiesMore.MODID, "textures/entity/" + NAME + ".png");
+		public final ResourceLocation TEXTURE = new ResourceLocation(ZombiesMoreFabric.MODID, "textures/entity/" + NAME + ".png");
 
 		@Override
 		public ResourceLocation getTextureLocation(AbstractMoZombie entity) {
@@ -100,9 +100,9 @@ public class ZombieDwarf extends AbstractMoZombie {
 			return entity.isAggressive();
 		}
 
-		public static final ModelLayerLocation DWARF = new ModelLayerLocation(new ResourceLocation(ZombiesMore.MODID, NAME), "main");
-		public static final ModelLayerLocation DWARF_INNER = new ModelLayerLocation(new ResourceLocation(ZombiesMore.MODID, NAME + "_inner"), "main");
-		public static final ModelLayerLocation DWARF_OUTER = new ModelLayerLocation(new ResourceLocation(ZombiesMore.MODID, NAME + "_outer"), "main");
+		public static final ModelLayerLocation DWARF = new ModelLayerLocation(new ResourceLocation(ZombiesMoreFabric.MODID, NAME), "main");
+		public static final ModelLayerLocation DWARF_INNER = new ModelLayerLocation(new ResourceLocation(ZombiesMoreFabric.MODID, NAME + "_inner"), "main");
+		public static final ModelLayerLocation DWARF_OUTER = new ModelLayerLocation(new ResourceLocation(ZombiesMoreFabric.MODID, NAME + "_outer"), "main");
 
 		public ZombieDwarfModel(ModelPart root) {
 			super(root);

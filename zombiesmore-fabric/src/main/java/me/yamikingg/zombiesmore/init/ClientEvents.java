@@ -5,6 +5,7 @@ import me.yamikingg.zombiesmore.entity.*;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.Environment;
 import net.fabricmc.api.EnvType;
+import net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry; // ✅ Added import
 import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.builders.CubeDeformation;
@@ -17,8 +18,9 @@ public class ClientEvents implements ClientModInitializer {
 
 	@Override
 	public void onInitializeClient() {
-		registerEntityRenderers();
+		// ✅ CRITICAL: Register model layers FIRST, before renderers try to bake them
 		registerLayerDefinitions();
+		registerEntityRenderers();
 	}
 
 	private void registerEntityRenderers() {
@@ -26,7 +28,7 @@ public class ClientEvents implements ClientModInitializer {
 		if (!Config.OLD_DWARF_ZOMBIE_MODEL) {
 			dwarfRenderFactory = manager -> new AbstractMoZombie.MoZombieRenderer(manager, ZombieDwarf.NAME);
 		}
-		
+
 		EntityRendererRegistry.register(Registration.DISCO_ZOMBIE, (manager) -> new AbstractMoZombie.MoZombieRenderer(manager, DiscoZombie.NAME));
 		EntityRendererRegistry.register(Registration.NETHER_ZOMBIE, (manager) -> new AbstractMoZombie.MoZombieRenderer(manager, NetherZombie.NAME));
 		EntityRendererRegistry.register(Registration.ZOMBIE_CHEF, (manager) -> new AbstractMoZombie.MoZombieRenderer(manager, ZombieChef.NAME));
@@ -44,7 +46,19 @@ public class ClientEvents implements ClientModInitializer {
 	}
 
 	private void registerLayerDefinitions() {
-		// Layer definitions would go here if needed
-		// For now, they can be registered during entity rendering
+		// ✅ Register Survivor model layer - THIS FIXES THE CRASH
+		EntityModelLayerRegistry.registerModelLayer(
+				Survivor.SurvivorModel.LAYER_LOCATION,
+				Survivor.SurvivorModel::createBodyLayer
+		);
+
+		// 🔄 Add other custom entity model layers here as needed:
+		// Example template for other entities:
+        /*
+        EntityModelLayerRegistry.registerModelLayer(
+            ZombieDwarf.LAYER_LOCATION,
+            ZombieDwarf::createBodyLayer
+        );
+        */
 	}
 }

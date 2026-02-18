@@ -8,7 +8,9 @@ import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.ModelLayers;
 import net.minecraft.client.model.geom.ModelPart;
+import net.minecraft.client.model.geom.builders.CubeDeformation;
 import net.minecraft.client.model.geom.builders.LayerDefinition;
+import net.minecraft.client.model.geom.builders.MeshDefinition;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.HumanoidMobRenderer;
@@ -109,7 +111,7 @@ public class Survivor extends AgeableMob implements NeutralMob {
 	}
 
 	@Override
-	protected int getExperienceReward() { // ✅ Fixed signature for 1.20.2
+	public int getExperienceReward() {
 		if (this.isBaby()) {
 			this.xpReward = (int)((float)this.xpReward * 2.5F);
 		}
@@ -429,11 +431,9 @@ public class Survivor extends AgeableMob implements NeutralMob {
 			super.renderToBuffer(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
 		}
 
-		public static ModelPart createBodyLayer() {
-			net.minecraft.client.model.geom.builders.MeshDefinition meshdefinition = HumanoidModel.createMesh(
-					net.minecraft.client.model.geom.builders.CubeDeformation.NONE, 0.0F);
-			net.minecraft.client.model.geom.builders.PartDefinition partdefinition = meshdefinition.getRoot();
-			return net.minecraft.client.model.geom.ModelPart.create(partdefinition);
+		public static LayerDefinition createBodyLayer() {
+			MeshDefinition meshdefinition = HumanoidModel.createMesh(CubeDeformation.NONE, 0.0F);
+			return LayerDefinition.create(meshdefinition, 64, 64); // ✅
 		}
 	}
 

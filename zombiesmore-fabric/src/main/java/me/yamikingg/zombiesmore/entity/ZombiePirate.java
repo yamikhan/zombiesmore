@@ -11,7 +11,7 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.nbt.CompoundTag;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 
 public class ZombiePirate extends AbstractMoZombie {
 	public ZombiePirate(EntityType<ZombiePirate> entityType, Level world) {

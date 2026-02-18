@@ -1,5 +1,9 @@
 package me.yamikingg.zombiesmore.item;
 
+import me.yamikingg.zombiesmore.ZombiesMoreFabric;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.LazyLoadedValue;
@@ -58,9 +62,9 @@ public enum DiscoGlassesMaterial implements ArmorMaterial {
         return this.repairIngredient.get();
     }
 
-    @OnlyIn(Dist.CLIENT)
+    @Environment(EnvType.CLIENT)
     public String getName() {
-        return new ResourceLocation(ZombiesMore.MODID, this.name).toString();
+        return new ResourceLocation(ZombiesMoreFabric.MODID, this.name).toString();
     }
 
     public float getToughness() {

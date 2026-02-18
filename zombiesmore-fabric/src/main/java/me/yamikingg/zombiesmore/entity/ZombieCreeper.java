@@ -1,5 +1,7 @@
 package me.yamikingg.zombiesmore.entity;
 
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -43,7 +45,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import me.yamikingg.zombiesmore.ZombiesMoreFabric;
 
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 import java.util.UUID;
 import java.util.function.Predicate;
 
@@ -291,7 +293,7 @@ public class ZombieCreeper extends Creeper {
 		// Add any custom equipment here if needed
 	}
 
-	@OnlyIn(Dist.CLIENT)
+	@Environment(EnvType.CLIENT)
 	public static class CreeperRenderer extends net.minecraft.client.renderer.entity.CreeperRenderer {
 		public CreeperRenderer(EntityRendererProvider.Context context) {
 			super(context);
@@ -299,7 +301,7 @@ public class ZombieCreeper extends Creeper {
 
 		@Override
 		public ResourceLocation getTextureLocation(Creeper entity) {
-			return new ResourceLocation(ZombiesMore.MODID, "textures/entity/" + NAME + ".png");
+			return new ResourceLocation(ZombiesMoreFabric.MODID, "textures/entity/" + NAME + ".png");
 		}
 	}
 }

@@ -18,17 +18,10 @@ public class ZombiesMoreFabric implements ModInitializer {
     public void onInitialize() {
         LOGGER.info("Initializing ZombiesMore...");
 
-        // Register items and entities
-        Registration.registerItems();
-        Registration.registerEntities();
-        Registration.registerSounds();
-        Registration.registerCreativeTab();
+        Registration.init();
+        Registration.registerEntityAttributes();
 
-        // Register spawn placements
         registerSpawnPlacements();
-
-        // Register entity attributes
-        registerEntityAttributes();
 
         LOGGER.info("ZombiesMore initialized successfully!");
     }
@@ -36,82 +29,71 @@ public class ZombiesMoreFabric implements ModInitializer {
     private void registerSpawnPlacements() {
         LOGGER.info("Registering spawn placements...");
 
-        // Register spawn placements for all your entities
-        SpawnPlacements.register(Registration.DISCO_ZOMBIE.getValue(),
+        SpawnPlacements.register(Registration.DISCO_ZOMBIE,
                 SpawnPlacements.Type.ON_GROUND,
                 Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
                 AbstractMoZombie::checkMonsterSpawnRules);
 
-        SpawnPlacements.register(Registration.NETHER_ZOMBIE.getValue(),
+        SpawnPlacements.register(Registration.NETHER_ZOMBIE,
                 SpawnPlacements.Type.ON_GROUND,
                 Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
                 AbstractMoZombie::checkMonsterSpawnRules);
 
-        SpawnPlacements.register(Registration.ZOMBIE_DWARF.getValue(),
+        SpawnPlacements.register(Registration.ZOMBIE_DWARF,
                 SpawnPlacements.Type.ON_GROUND,
                 Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
                 AbstractMoZombie::checkMonsterSpawnRules);
 
-        SpawnPlacements.register(Registration.ZOMBIE_CHEF.getValue(),
+        SpawnPlacements.register(Registration.ZOMBIE_CHEF,
                 SpawnPlacements.Type.ON_GROUND,
                 Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
                 AbstractMoZombie::checkMonsterSpawnRules);
 
-        SpawnPlacements.register(Registration.ZOMBIE_CYBORG.getValue(),
+        SpawnPlacements.register(Registration.ZOMBIE_CYBORG,
                 SpawnPlacements.Type.ON_GROUND,
                 Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
                 AbstractMoZombie::checkMonsterSpawnRules);
 
-        SpawnPlacements.register(Registration.ZOMBIE_HEROBRINE.getValue(),
+        SpawnPlacements.register(Registration.ZOMBIE_HEROBRINE,
                 SpawnPlacements.Type.ON_GROUND,
                 Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
                 AbstractMoZombie::checkMonsterSpawnRules);
 
-        SpawnPlacements.register(Registration.ZOMBIE_KING.getValue(),
+        SpawnPlacements.register(Registration.ZOMBIE_KING,
                 SpawnPlacements.Type.ON_GROUND,
                 Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
                 AbstractMoZombie::checkMonsterSpawnRules);
 
-        SpawnPlacements.register(Registration.ZOMBIE_KNIGHT.getValue(),
+        SpawnPlacements.register(Registration.ZOMBIE_KNIGHT,
                 SpawnPlacements.Type.ON_GROUND,
                 Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
                 AbstractMoZombie::checkMonsterSpawnRules);
 
-        SpawnPlacements.register(Registration.ZOMBIE_MINER.getValue(),
+        SpawnPlacements.register(Registration.ZOMBIE_MINER,
                 SpawnPlacements.Type.ON_GROUND,
                 Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
                 AbstractMoZombie::checkMonsterSpawnRules);
 
-        SpawnPlacements.register(Registration.ZOMBIE_PA.getValue(),
+        SpawnPlacements.register(Registration.ZOMBIE_PA,
                 SpawnPlacements.Type.ON_GROUND,
                 Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
                 AbstractMoZombie::checkMonsterSpawnRules);
 
-        SpawnPlacements.register(Registration.ZOMBIE_PIRATE.getValue(),
+        SpawnPlacements.register(Registration.ZOMBIE_PIRATE,
                 SpawnPlacements.Type.ON_GROUND,
                 Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
                 AbstractMoZombie::checkMonsterSpawnRules);
 
-        SpawnPlacements.register(Registration.ZOMBIE_CREEPER.getValue(),
+        SpawnPlacements.register(Registration.ZOMBIE_CREEPER,
                 SpawnPlacements.Type.ON_GROUND,
                 Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
                 ZombieCreeper::checkMonsterSpawnRules);
 
-        SpawnPlacements.register(Registration.SURVIVOR.getValue(),
+        SpawnPlacements.register(Registration.SURVIVOR,
                 SpawnPlacements.Type.ON_GROUND,
                 Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
                 Survivor::checkMobSpawnRules);
 
         LOGGER.info("Spawn placements registered successfully!");
-    }
-
-    private void registerEntityAttributes() {
-        LOGGER.info("Registering entity attributes...");
-
-        // In Fabric, entity attributes are registered differently
-        // This will be handled by an event listener or in entity initialization
-        // For now, entity classes should have their attributes defined in their constructors
-
-        LOGGER.info("Entity attributes registered successfully!");
     }
 }

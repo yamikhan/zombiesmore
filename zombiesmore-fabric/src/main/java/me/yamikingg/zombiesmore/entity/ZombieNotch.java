@@ -10,8 +10,8 @@ import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.nbt.CompoundTag;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nullable;
 
 public class ZombieNotch extends AbstractMoZombie {
 	public ZombieNotch(EntityType<ZombieNotch> entityType, Level world) {

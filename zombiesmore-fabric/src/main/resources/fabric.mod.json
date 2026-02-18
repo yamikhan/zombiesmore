@@ -13,7 +13,7 @@
     "issues": ""
   },
   "license": "MIT",
-  "icon": "assets/zombiesmore_yamikingg/icon.png",
+  "icon": "logo.png",
   "environment": "*",
   "entrypoints": {
     "main": [

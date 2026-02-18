@@ -10,7 +10,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.nbt.CompoundTag;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 
 public class ZombieHerobrine extends AbstractMoZombie {
 	public ZombieHerobrine(EntityType<ZombieHerobrine> entityType, Level world) {

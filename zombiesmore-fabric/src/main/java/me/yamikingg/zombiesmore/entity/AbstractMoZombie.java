@@ -1,5 +1,7 @@
 package me.yamikingg.zombiesmore.entity;
 
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.client.model.ZombieModel;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.ModelLayers;
@@ -72,7 +74,7 @@ public abstract class AbstractMoZombie extends Zombie {
 		return false; // Husk-specific behavior, change as needed
 	}
 
-	@OnlyIn(Dist.CLIENT)
+	@Environment(EnvType.CLIENT)
 	public static class MoZombieRenderer extends AbstractZombieRenderer<AbstractMoZombie, ZombieModel<AbstractMoZombie>> {
 		private final ResourceLocation texture;
 
@@ -89,7 +91,7 @@ public abstract class AbstractMoZombie extends Zombie {
 					new ZombieModel<>(context.bakeLayer(layer)),
 					new ZombieModel<>(context.bakeLayer(innerArmorLayer)),
 					new ZombieModel<>(context.bakeLayer(outerArmorLayer)));
-			this.texture = new ResourceLocation(ZombiesMore.MODID, "textures/entity/" + NAME + ".png");
+			this.texture = new ResourceLocation(ZombiesMoreFabric.MODID, "textures/entity/" + NAME + ".png");
 		}
 
 		@Override
