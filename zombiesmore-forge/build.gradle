@@ -1,7 +1,6 @@
-import groovy.json.JsonSlurper  // Remove the incorrect Closure import
 
 buildscript {
-    repositories {  // ← REQUIRED for classpath dependencies
+    repositories {
         maven { url = 'https://maven.minecraftforge.net' }
         maven { url = 'https://maven.parchmentmc.org' }
         mavenCentral()
@@ -9,11 +8,11 @@ buildscript {
 
     dependencies {
         classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '[6.0,6.2)', changing: true
-        classpath 'org.parchmentmc:librarian:1.+'  // Add Parchment Librarian
+        classpath 'org.parchmentmc:librarian:1.+'
     }
 }
 apply plugin: 'net.minecraftforge.gradle'
-apply plugin: 'org.parchmentmc.librarian.forgegradle'  // Apply Parchment plugin
+apply plugin: 'org.parchmentmc.librarian.forgegradle'
 apply plugin: 'eclipse'
 
 version = "${minecraft_version}-${mod_version}"
@@ -23,10 +22,7 @@ archivesBaseName = "ZombiesMore"
 java.toolchain.languageVersion = JavaLanguageVersion.of(17)
 
 minecraft {
-    // Change from property-based to direct Parchment mapping
-    mappings channel: 'parchment', version: '2023.12.10-1.20.2'
-    // OR if you want to keep it dynamic in gradle.properties:
-    // mappings channel: "${mappings_channel}", version: "${parchment_version}"
+    mappings channel: 'parchment', version: '2023.12.31-1.20.3'
 
     runs {
         client {
@@ -35,7 +31,6 @@ minecraft {
             property 'forge.logging.markers', 'REGISTRIES'
             property 'forge.logging.console.level', 'debug'
 
-            // Add these properties for better debugging
             property 'mixin.env.remapRefMap', 'true'
             property 'mixin.env.refMapRemappingFile', "${buildDir}/createSrgToMcp/output.srg"
 
@@ -62,7 +57,6 @@ minecraft {
             }
         }
 
-        // Add data generation run configuration
         data {
             workingDirectory project.file('run')
 
@@ -82,16 +76,16 @@ minecraft {
 
 processResources {
     // This ensures the mod_version property is available during expansion
-    inputs.property "mod_version", project.findProperty('mod_version') ?: '0.2.0'
+    inputs.property "mod_version", project.findProperty('mod_version') ?: '0.2.1'
 
     filesMatching("META-INF/mods.toml") {
         // This replaces ${mod_version} with the actual value
-        expand "mod_version": project.findProperty('mod_version') ?: '0.2.0'
+        expand "mod_version": project.findProperty('mod_version') ?: '0.2.1'
     }
 
     // This handles any other files that might need expansion
     filesMatching("**/*.toml") {
-        expand "mod_version": project.findProperty('mod_version') ?: '0.2.0'
+        expand "mod_version": project.findProperty('mod_version') ?: '0.2.1'
     }
 }
 

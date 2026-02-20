@@ -23,14 +23,12 @@ public class ZombiesMore {
 	public ZombiesMore() {
 		IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
 
-		// Register setup and attribute creation events
 		modEventBus.addListener(this::commonSetup);
 		modEventBus.addListener(this::registerAttributes);
 
 		Registration.init(modEventBus);
 
 		net.minecraftforge.common.MinecraftForge.EVENT_BUS.register(this);
-		// Load config
 		Config.register();
 		Config.loadConfig(Config.CLIENT_CONFIG, FMLPaths.CONFIGDIR.get().resolve(MODID + "-client.toml"));
 	}
@@ -39,7 +37,6 @@ public class ZombiesMore {
 		event.enqueueWork(() -> {
 			LOGGER.info("Registering spawn placements...");
 
-			// Register spawn placements for all your entities
 			SpawnPlacements.register(Registration.DISCO_ZOMBIE.get(),
 					SpawnPlacements.Type.ON_GROUND,
 					Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
@@ -113,8 +110,6 @@ public class ZombiesMore {
 	private void registerAttributes(final EntityAttributeCreationEvent event) {
 		LOGGER.info("Registering entity attributes...");
 
-		// Register attributes for all your entities
-		// Make sure each entity class has a createAttributes() method
 		event.put(Registration.DISCO_ZOMBIE.get(),
 				me.yamikingg.zombiesmore.entity.DiscoZombie.createAttributes().build());
 

@@ -76,7 +76,7 @@ public class Registration {
 			.dimensions(EntityDimensions.scalable(0.6f, 1.95f)).build();
 
 	public static final EntityType<ZombieDwarf> ZOMBIE_DWARF = FabricEntityTypeBuilder.<ZombieDwarf>create(MobCategory.MONSTER, ZombieDwarf::new)
-			.dimensions(EntityDimensions.scalable(0.6f, 1.7f)).build();
+			.dimensions(EntityDimensions.scalable(0.7f, 1.3f)).build();
 
 	public static final EntityType<NetherZombie> NETHER_ZOMBIE = FabricEntityTypeBuilder.<NetherZombie>create(MobCategory.MONSTER, NetherZombie::new)
 			.dimensions(EntityDimensions.scalable(0.6f, 1.95f)).build();

@@ -1,5 +1,5 @@
 modLoader="javafml"
-loaderVersion="[40,)"  # Updated for 1.18.2 Forge
+loaderVersion="[49,)"
 license="MIT"
 
 [[mods]]
@@ -7,10 +7,9 @@ modId="zombiesmore_yamikingg"
 version="${mod_version}"
 displayName="ZombiesMore"
 credits="Original Mo'Zombies concept by coocoo617, remake by Wilyicaro, and then me yamikingg"
-# displayURL=""  # Either remove or use your own URL
 logoFile="logo.png"
 authors="Yamikingg"
-updateJSONURL=""  # Optional: Add if you have update JSON
+updateJSONURL=""
 
 description='''
 Remake of the original Mo'Zombies mod from Minecraft 1.7.10.
@@ -34,21 +33,11 @@ Adds various themed zombie variants to the game including:
 Features custom spawn placements and behaviors for each zombie type.
 '''
 
-# Issue tracking URL (optional)
 issueTrackerURL=""
 
-# Mod dependencies
 [[dependencies.zombiesmore_yamikingg]]
 modId="minecraft"
 mandatory=true
-versionRange="[1.18.,)"
+versionRange="[1.20.3,1.21)"
 ordering="NONE"
 side="BOTH"
-
-# If you have soft dependencies (optional)
-# [[dependencies.zombiesmore_yamikingg]]
-#     modId="jei"
-#     mandatory=false
-#     versionRange="[9.7.0.195,)"
-#     ordering="AFTER"
-#     side="CLIENT"

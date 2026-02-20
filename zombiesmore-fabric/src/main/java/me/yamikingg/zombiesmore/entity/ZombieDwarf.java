@@ -12,12 +12,16 @@ import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.HumanoidMobRenderer;
 import net.minecraft.client.renderer.entity.layers.HumanoidArmorLayer;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.monster.Monster;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.level.ServerLevelAccessor;
@@ -33,7 +37,6 @@ public class ZombieDwarf extends AbstractMoZombie {
 	public static int ID = 15;
 	public static String NAME = "zombie_dwarf";
 
-	// 1.20.1 requires proper finalizeSpawn method for spawning
 	@Override
 	@Nullable
 	public net.minecraft.world.entity.SpawnGroupData finalizeSpawn(
@@ -43,30 +46,38 @@ public class ZombieDwarf extends AbstractMoZombie {
 			@Nullable net.minecraft.world.entity.SpawnGroupData spawnData,
 			@Nullable CompoundTag dataTag) {
 
-		net.minecraft.world.entity.SpawnGroupData data = super.finalizeSpawn(level, difficulty, spawnType, spawnData, dataTag);
-		return data;
+        return super.finalizeSpawn(level, difficulty, spawnType, spawnData, dataTag);
 	}
 
 	// Optional: Override populateDefaultEquipmentSlots if needed
 	@Override
-	protected void populateDefaultEquipmentSlots(net.minecraft.util.RandomSource random, DifficultyInstance difficulty) {
+	protected void populateDefaultEquipmentSlots(RandomSource random, DifficultyInstance difficulty) {
 		super.populateDefaultEquipmentSlots(random, difficulty);
-		// Add dwarf-specific equipment here if needed
+		this.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(Items.IRON_AXE)); // Or your custom axe
+		this.setDropChance(EquipmentSlot.MAINHAND, 0.1F);
+	}
+
+	@Override
+	public EntityDimensions getDimensions(Pose pose) {
+		return this.isBaby()
+				? super.getDimensions(pose).scale(0.6F)
+				: new EntityDimensions(0.7F, 1.3F, true); // Wider & shorter than default zombie
 	}
 
 	public static AttributeSupplier.Builder createAttributes() {
 		return Monster.createMonsterAttributes()
-				.add(Attributes.FOLLOW_RANGE, 60.0D)
-				.add(Attributes.MOVEMENT_SPEED, 0.4F)
-				.add(Attributes.ATTACK_DAMAGE, 1.0D)
-				.add(Attributes.ARMOR, 2.0D)
-				.add(Attributes.SPAWN_REINFORCEMENTS_CHANCE, 0.0D) // Added missing value
-				.add(Attributes.MAX_HEALTH, 15.0D);
+				.add(Attributes.SPAWN_REINFORCEMENTS_CHANCE) // ← ADD THIS
+				.add(Attributes.FOLLOW_RANGE, 40.0D)
+				.add(Attributes.MOVEMENT_SPEED, 0.25F)
+				.add(Attributes.ATTACK_DAMAGE, 4.0D)
+				.add(Attributes.ARMOR, 6.0D)
+				.add(Attributes.KNOCKBACK_RESISTANCE, 0.6D)
+				.add(Attributes.MAX_HEALTH, 25.0D);
 	}
 
 	@Override
 	protected float getStandingEyeHeight(Pose pose, EntityDimensions dimensions) {
-		return this.isBaby() ? 0.80F : 1.51F;
+		return this.isBaby() ? 0.6F : 1.05F; // Lower eye level for dwarf
 	}
 
 	public static class RendererZombieDwarf extends HumanoidMobRenderer<AbstractMoZombie, ZombieDwarfModel<AbstractMoZombie>> {
@@ -123,9 +134,17 @@ public class ZombieDwarf extends AbstractMoZombie {
 							.texOffs(32, 0).addBox(-4.0F, -8.0F, -4.0F, 8.0F, 8.0F, 8.0F, new CubeDeformation(0.25F)),
 					PartPose.offset(0.0F, 4.0F, 0.0F));
 
+			PartDefinition helmet = hat.addOrReplaceChild("helmet", CubeListBuilder.create()
+							.texOffs(32, 16).addBox(-4.5F, -8.5F, -4.5F, 9.0F, 9.0F, 9.0F, new CubeDeformation(0.3F)),
+					PartPose.ZERO);
+
+			PartDefinition beard = head.addOrReplaceChild("beard", CubeListBuilder.create()
+							.texOffs(0, 32).addBox(-3.0F, 1.0F, -4.5F, 6.0F, 4.0F, 1.0F, cubeDeformation),
+					PartPose.ZERO);
+
 			PartDefinition body = partdefinition.addOrReplaceChild("body", CubeListBuilder.create()
-							.texOffs(16, 16).addBox(-4.0F, -5.0F, -2.0F, 8.0F, 10.0F, 4.0F, cubeDeformation),
-					PartPose.offset(0.0F, 9.0F, 0.0F));
+							.texOffs(16, 16).addBox(-4.5F, -4.0F, -2.5F, 9.0F, 9.0F, 5.0F, cubeDeformation),
+					PartPose.offset(0.0F, 10.0F, 0.0F));
 
 			PartDefinition left_arm = partdefinition.addOrReplaceChild("left_arm", CubeListBuilder.create()
 							.texOffs(40, 16).mirror().addBox(-1F, -2.0F, -2.0F, 4.0F, 11.0F, 4.0F, cubeDeformation).mirror(),
@@ -172,6 +191,13 @@ public class ZombieDwarf extends AbstractMoZombie {
 				this.body.y = 9.0F;
 				this.leftArm.y = 6.0F;
 				this.rightArm.y = 6.0F;
+			}
+
+			if (this.isAggressive(entity)) {
+				this.rightArm.xRot = -0.8F;
+				this.rightArm.yRot = -0.3F;
+				this.leftArm.xRot = -0.4F;
+				this.leftArm.yRot = 0.3F;
 			}
 
 			AnimationUtils.animateZombieArms(this.leftArm, this.rightArm, this.isAggressive(entity), this.attackTime, ageInTicks);

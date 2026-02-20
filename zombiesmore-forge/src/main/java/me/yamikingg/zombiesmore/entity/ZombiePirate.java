@@ -56,10 +56,10 @@ public class ZombiePirate extends AbstractMoZombie {
 		return 1.0F;
 	}
 
-	// Optional: Make pirates swim faster
+
 	@Override
-	public boolean canBreatheUnderwater() {
-		return true; // Pirates are used to the sea
+	public int getAirSupply() {
+		return Integer.MAX_VALUE;
 	}
 
 	// Optional: Make them spawn near water
