@@ -39,7 +39,6 @@ public class ZombiesMore {
 		});
 	}
 
-	// ✅ FIXED: Use SpawnPlacements.Type for NeoForge 1.20.2
 	private void registerSpawnPlacements(final SpawnPlacementRegisterEvent event) {
 		LOGGER.info("Registering spawn placements with NeoForge event...");
 
