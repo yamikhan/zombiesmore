@@ -22,7 +22,7 @@ archivesBaseName = "ZombiesMore"
 java.toolchain.languageVersion = JavaLanguageVersion.of(17)
 
 minecraft {
-    mappings channel: 'parchment', version: '2023.12.31-1.20.3'
+    mappings channel: 'parchment', version: '2024.04.14-1.20.4'
 
     runs {
         client {
@@ -76,16 +76,16 @@ minecraft {
 
 processResources {
     // This ensures the mod_version property is available during expansion
-    inputs.property "mod_version", project.findProperty('mod_version') ?: '0.2.1'
+    inputs.property "mod_version", project.findProperty('mod_version') ?: '0.2.2'
 
     filesMatching("META-INF/mods.toml") {
         // This replaces ${mod_version} with the actual value
-        expand "mod_version": project.findProperty('mod_version') ?: '0.2.1'
+        expand "mod_version": project.findProperty('mod_version') ?: '0.2.2'
     }
 
     // This handles any other files that might need expansion
     filesMatching("**/*.toml") {
-        expand "mod_version": project.findProperty('mod_version') ?: '0.2.1'
+        expand "mod_version": project.findProperty('mod_version') ?: '0.2.2'
     }
 }
 
@@ -142,6 +142,10 @@ repositories {
         url "https://maven.parchmentmc.org"  // Ensure Parchment is in repositories
     }
 }
-
+sourceSets.each {
+    def dir = layout.buildDirectory.dir("sourcesSets/$it.name")
+    it.output.resourcesDir = dir
+    it.java.destinationDirectory = dir
+}
 // Optional: Configure jar output
 jar.finalizedBy('reobfJar')
