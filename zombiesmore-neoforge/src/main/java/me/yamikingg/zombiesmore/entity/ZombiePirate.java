@@ -21,7 +21,6 @@ public class ZombiePirate extends AbstractMoZombie {
 	public static int ID = 7;
 	public static String NAME = "zombie_pirate";
 
-	// 1.20.1 requires proper finalizeSpawn method for spawning
 	@Override
 	@Nullable
 	public net.minecraft.world.entity.SpawnGroupData finalizeSpawn(
@@ -36,16 +35,12 @@ public class ZombiePirate extends AbstractMoZombie {
 		return data;
 	}
 
-	// Updated method signature for 1.20.1
 	@Override
 	protected void populateDefaultEquipmentSlots(net.minecraft.util.RandomSource random, DifficultyInstance difficulty) {
 		super.populateDefaultEquipmentSlots(random, difficulty);
 		this.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(Items.GOLDEN_SWORD));
 
-		// Optional: Add pirate-themed equipment
-		// Pirate hat/headband
 		this.setItemSlot(EquipmentSlot.HEAD, new ItemStack(Items.LEATHER_HELMET));
-		// Eye patch could be represented by a pumpkin on head sometimes
 		if (random.nextInt(10) == 0) {
 			this.setItemSlot(EquipmentSlot.HEAD, new ItemStack(Items.CARVED_PUMPKIN));
 		}
@@ -56,16 +51,14 @@ public class ZombiePirate extends AbstractMoZombie {
 		return 1.0F;
 	}
 
-	// Optional: Make pirates swim faster
+
 	@Override
-	public boolean canBreatheUnderwater() {
-		return true; // Pirates are used to the sea
+	public int getAirSupply() {
+		return Integer.MAX_VALUE;
 	}
 
-	// Optional: Make them spawn near water
 	@Override
 	public boolean checkSpawnRules(net.minecraft.world.level.LevelAccessor level, net.minecraft.world.entity.MobSpawnType spawnType) {
-		// Pirates should spawn near water
 		return super.checkSpawnRules(level, spawnType);
 	}
 
@@ -73,9 +66,9 @@ public class ZombiePirate extends AbstractMoZombie {
 		return Monster.createMonsterAttributes()
 				.add(Attributes.FOLLOW_RANGE, 25.0D)
 				.add(Attributes.MOVEMENT_SPEED, 0.3D)
-				.add(Attributes.ATTACK_DAMAGE, 4.0D)        // Golden sword does less damage but pirates are skilled
-				.add(Attributes.ARMOR, 0.0D)                // No armor, but maybe add leather armor?
-				.add(Attributes.SPAWN_REINFORCEMENTS_CHANCE, 0.0D) // Added missing value
+				.add(Attributes.ATTACK_DAMAGE, 4.0D)
+				.add(Attributes.ARMOR, 0.0D)
+				.add(Attributes.SPAWN_REINFORCEMENTS_CHANCE, 0.0D)
 				.add(Attributes.MAX_HEALTH, 20.0D);
 	}
 }
