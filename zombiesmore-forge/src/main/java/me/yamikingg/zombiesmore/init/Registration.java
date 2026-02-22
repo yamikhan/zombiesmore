@@ -1,6 +1,7 @@
 package me.yamikingg.zombiesmore.init;
 
 import me.yamikingg.zombiesmore.entity.*;
+import me.yamikingg.zombiesmore.item.DiscoGlassesMaterial;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -19,7 +20,6 @@ import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 import me.yamikingg.zombiesmore.ZombiesMore;
-import me.yamikingg.zombiesmore.item.DiscoGlassesMaterial;
 
 
 public class Registration {
@@ -36,7 +36,13 @@ public class Registration {
 		CREATIVE_MODE_TABS.register(modEventBus);
 	}
 
-	public static final RegistryObject<Item> DISCO_GLASSES = ITEMS.register("disco_glasses", () -> new ArmorItem(DiscoGlassesMaterial.GLASSES, ArmorItem.Type.HELMET, new Item.Properties()));
+	public static final RegistryObject<Item> DISCO_GLASSES = ITEMS.register("disco_glasses",
+			() -> new ArmorItem(
+					DiscoGlassesMaterial.GLASSES.getHolder().orElseThrow(), // <-- Holder<ArmorMaterial>
+					ArmorItem.Type.HELMET,
+					new Item.Properties()
+			)
+	);
 	public static final RegistryObject<SoundEvent> HURT_SURVIVOR = SOUNDS.register("hurt_survivor", () -> SoundEvent.createVariableRangeEvent(new ResourceLocation(ZombiesMore.MODID, "hurt_survivor")));
 	public static final RegistryObject<SoundEvent> HURT_SURVIVOR_FEMALE = SOUNDS.register("hurt_survivor_female", () -> SoundEvent.createVariableRangeEvent(new ResourceLocation(ZombiesMore.MODID, "hurt_survivor_female")));
 

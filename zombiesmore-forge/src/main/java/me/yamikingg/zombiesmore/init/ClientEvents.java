@@ -26,8 +26,6 @@ public class ClientEvents {
 	@SubscribeEvent
 	public static void entityRenderEvent(EntityRenderersEvent.RegisterRenderers event) {
 
-		EntityRendererProvider<AbstractMoZombie> dwarfRenderFactory = ZombieDwarf.RendererZombieDwarf::new;
-		if (Config.oldDwarfZombieModel.get())  dwarfRenderFactory = manager -> new AbstractMoZombie.MoZombieRenderer(manager, ZombieDwarf.NAME);
 		event.registerEntityRenderer(Registration.DISCO_ZOMBIE.get(), manager -> new AbstractMoZombie.MoZombieRenderer(manager, DiscoZombie.NAME));
 		event.registerEntityRenderer(Registration.NETHER_ZOMBIE.get(), manager -> new AbstractMoZombie.MoZombieRenderer(manager, NetherZombie.NAME));
 		event.registerEntityRenderer(Registration.ZOMBIE_CHEF.get(), manager -> new AbstractMoZombie.MoZombieRenderer(manager, ZombieChef.NAME));
@@ -41,8 +39,12 @@ public class ClientEvents {
 		event.registerEntityRenderer(Registration.ZOMBIE_PIRATE.get(), manager -> new AbstractMoZombie.MoZombieRenderer(manager, ZombiePirate.NAME));
 		event.registerEntityRenderer(Registration.SURVIVOR.get(), Survivor.SurvivorRenderer::new);
 		event.registerEntityRenderer(Registration.ZOMBIE_CREEPER.get(), ZombieCreeper.CreeperRenderer::new);
-		event.registerEntityRenderer(Registration.ZOMBIE_DWARF.get(), dwarfRenderFactory);
-	}
+		event.registerEntityRenderer(Registration.ZOMBIE_DWARF.get(), manager -> {
+			if (Config.oldDwarfZombieModel.get()) {
+				return new AbstractMoZombie.MoZombieRenderer(manager, ZombieDwarf.NAME);
+			}
+			return new ZombieDwarf.RendererZombieDwarf(manager);
+		});	}
 	@SubscribeEvent
 	public static void registerLayerDefinition(EntityRenderersEvent.RegisterLayerDefinitions event) {
 

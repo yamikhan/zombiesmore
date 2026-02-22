@@ -2,10 +2,10 @@ package me.yamikingg.zombiesmore.entity;
 
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.SpawnGroupData;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.monster.Monster;
-import net.minecraft.world.entity.monster.Zombie;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.nbt.CompoundTag;
@@ -24,8 +24,7 @@ public class ZombieCyborg extends AbstractMoZombie {
 		return 1.0F;
 	}
 
-	// 1.20.1 requires proper finalizeSpawn method for spawning
-	@Override
+
 	@Nullable
 	public net.minecraft.world.entity.SpawnGroupData finalizeSpawn(
 			ServerLevelAccessor level,
@@ -34,7 +33,7 @@ public class ZombieCyborg extends AbstractMoZombie {
 			@Nullable net.minecraft.world.entity.SpawnGroupData spawnData,
 			@Nullable CompoundTag dataTag) {
 
-		net.minecraft.world.entity.SpawnGroupData data = super.finalizeSpawn(level, difficulty, spawnType, spawnData, dataTag);
+		SpawnGroupData data = super.finalizeSpawn(level, difficulty, spawnType, spawnData);
 		return data;
 	}
 

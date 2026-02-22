@@ -33,8 +33,7 @@ public class ZombieDwarf extends AbstractMoZombie {
 	public static int ID = 15;
 	public static String NAME = "zombie_dwarf";
 
-	// 1.20.1 requires proper finalizeSpawn method for spawning
-	@Override
+
 	@Nullable
 	public net.minecraft.world.entity.SpawnGroupData finalizeSpawn(
 			ServerLevelAccessor level,
@@ -43,7 +42,7 @@ public class ZombieDwarf extends AbstractMoZombie {
 			@Nullable net.minecraft.world.entity.SpawnGroupData spawnData,
 			@Nullable CompoundTag dataTag) {
 
-		net.minecraft.world.entity.SpawnGroupData data = super.finalizeSpawn(level, difficulty, spawnType, spawnData, dataTag);
+		net.minecraft.world.entity.SpawnGroupData data = super.finalizeSpawn(level, difficulty, spawnType, spawnData);
 		return data;
 	}
 
@@ -63,11 +62,7 @@ public class ZombieDwarf extends AbstractMoZombie {
 				.add(Attributes.SPAWN_REINFORCEMENTS_CHANCE, 0.0D) // Added missing value
 				.add(Attributes.MAX_HEALTH, 15.0D);
 	}
-
-	@Override
-	protected float getStandingEyeHeight(Pose pose, EntityDimensions dimensions) {
-		return this.isBaby() ? 0.80F : 1.51F;
-	}
+	
 
 	public static class RendererZombieDwarf extends HumanoidMobRenderer<AbstractMoZombie, ZombieDwarfModel<AbstractMoZombie>> {
 		public final ResourceLocation TEXTURE = new ResourceLocation(ZombiesMore.MODID, "textures/entity/" + NAME + ".png");
