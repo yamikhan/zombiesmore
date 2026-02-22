@@ -30,7 +30,7 @@ runs {
 
     data {
         workingDirectory project.file('run')
-        programArguments.addAll '--mod', 'zombiesmore_yamikingg', '--all', '--output', file('src/generated/resources/').getAbsolutePath(), '--existing', file('src/main/resources/').getAbsolutePath()
+        arguments.addAll '--mod', 'zombiesmore_yamikingg', '--all', '--output', file('src/generated/resources/').getAbsolutePath(), '--existing', file('src/main/resources/').getAbsolutePath()
     }
 }
 
