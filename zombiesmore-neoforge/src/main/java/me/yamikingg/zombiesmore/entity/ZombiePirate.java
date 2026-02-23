@@ -21,7 +21,7 @@ public class ZombiePirate extends AbstractMoZombie {
 	public static int ID = 7;
 	public static String NAME = "zombie_pirate";
 
-	@Override
+
 	@Nullable
 	public net.minecraft.world.entity.SpawnGroupData finalizeSpawn(
 			ServerLevelAccessor level,
@@ -30,7 +30,7 @@ public class ZombiePirate extends AbstractMoZombie {
 			@Nullable net.minecraft.world.entity.SpawnGroupData spawnData,
 			@Nullable CompoundTag dataTag) {
 
-		net.minecraft.world.entity.SpawnGroupData data = super.finalizeSpawn(level, difficulty, spawnType, spawnData, dataTag);
+		net.minecraft.world.entity.SpawnGroupData data = super.finalizeSpawn(level, difficulty, spawnType, spawnData);
 		this.populateDefaultEquipmentSlots(level.getRandom(), difficulty);
 		return data;
 	}

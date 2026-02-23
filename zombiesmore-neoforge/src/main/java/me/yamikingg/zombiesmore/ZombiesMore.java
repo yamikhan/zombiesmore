@@ -4,8 +4,10 @@ import me.yamikingg.zombiesmore.entity.AbstractMoZombie;
 import me.yamikingg.zombiesmore.entity.Survivor;
 import me.yamikingg.zombiesmore.entity.ZombieCreeper;
 import me.yamikingg.zombiesmore.init.Registration;
+import me.yamikingg.zombiesmore.item.DiscoGlassesMaterial;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.SpawnPlacements;  // ← Contains the Type enum
+import net.minecraft.world.entity.SpawnPlacements;
+import net.minecraft.world.entity.SpawnPlacementTypes;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
@@ -28,6 +30,7 @@ public class ZombiesMore {
 		modEventBus.addListener(this::registerSpawnPlacements);
 
 		Registration.init(modEventBus);
+		DiscoGlassesMaterial.ARMOR_MATERIALS.register(modEventBus);
 		Config.register();
 		Config.loadConfig(Config.CLIENT_CONFIG,
 				net.neoforged.fml.loading.FMLPaths.CONFIGDIR.get().resolve(MODID + "-client.toml"));
@@ -58,13 +61,13 @@ public class ZombiesMore {
 
 		// Special cases with custom spawn predicates
 		event.register(Registration.ZOMBIE_CREEPER.get(),
-				SpawnPlacements.Type.ON_GROUND,  // ✅ CORRECT: SpawnPlacements.Type
+				SpawnPlacementTypes.ON_GROUND,
 				Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
 				ZombieCreeper::checkMonsterSpawnRules,
 				SpawnPlacementRegisterEvent.Operation.REPLACE);
 
 		event.register(Registration.SURVIVOR.get(),
-				SpawnPlacements.Type.ON_GROUND,
+				SpawnPlacementTypes.ON_GROUND,
 				Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
 				Survivor::checkMobSpawnRules,
 				SpawnPlacementRegisterEvent.Operation.REPLACE);
@@ -72,11 +75,10 @@ public class ZombiesMore {
 		LOGGER.info("Spawn placements registered successfully!");
 	}
 
-	// ✅ Helper method to avoid code duplication
 	private <T extends AbstractMoZombie> void registerMonsterSpawn(
 			SpawnPlacementRegisterEvent event, EntityType<T> entityType) {
 		event.register(entityType,
-				SpawnPlacements.Type.ON_GROUND,  // ✅ SpawnPlacements.Type for 1.20.2
+				SpawnPlacementTypes.ON_GROUND,
 				Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
 				AbstractMoZombie::checkMonsterSpawnRules,
 				SpawnPlacementRegisterEvent.Operation.REPLACE);

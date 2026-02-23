@@ -1,77 +1,107 @@
 plugins {
-    id 'net.neoforged.gradle.userdev' version '7.1.20'
-    id 'eclipse'
+    id 'java-library'
     id 'maven-publish'
+    id 'net.neoforged.moddev' version '2.0.140'
+    id 'idea'
 }
 
 version = "${minecraft_version}-${mod_version}"
-group = 'yamikingg.zombiesmore_yamikingg' // Keep your package name
+group = 'yamikingg.zombiesmore_yamikingg'
 
 base {
     archivesName = "zombiesmore"
 }
 
-java.toolchain.languageVersion = JavaLanguageVersion.of(17)
+java.toolchain.languageVersion = JavaLanguageVersion.of(21)
 
-runs {
-    configureEach {
-        modSource project.sourceSets.main
-        systemProperty 'neoforge.logging.markers', 'REGISTRIES'
-        systemProperty 'neoforge.logging.console.level', 'debug'
+neoForge {
+    version = project.neoforge_version
+
+    parchment {
+         minecraftVersion = project.parchment_mc
+         mappingsVersion = project.parchment_mappings
     }
 
-    client {
-        workingDirectory project.file('run')
+    // accessTransformers = project.files('src/main/resources/META-INF/accesstransformer.cfg')
+
+    runs {
+        client {
+            client()
+            gameDirectory = project.file('run')
+            systemProperty 'neoforge.logging.markers', 'REGISTRIES'
+            systemProperty 'neoforge.logging.console.level', 'debug'
+        }
+
+        server {
+            server()
+            gameDirectory = project.file('run')
+            programArgument '--nogui'
+            systemProperty 'neoforge.logging.markers', 'REGISTRIES'
+            systemProperty 'neoforge.logging.console.level', 'debug'
+        }
+
+        data {
+            data()
+            gameDirectory = project.file('run')
+            programArguments.addAll(
+                    '--mod', 'zombiesmore_yamikingg',
+                    '--all',
+                    '--output', file('src/generated/resources/').getAbsolutePath(),
+                    '--existing', file('src/main/resources/').getAbsolutePath()
+            )
+            systemProperty 'neoforge.logging.markers', 'REGISTRIES'
+            systemProperty 'neoforge.logging.console.level', 'debug'
+        }
     }
 
-    server {
-        workingDirectory project.file('run')
-    }
-
-    data {
-        workingDirectory project.file('run')
-        arguments.addAll '--mod', 'zombiesmore_yamikingg', '--all', '--output', file('src/generated/resources/').getAbsolutePath(), '--existing', file('src/main/resources/').getAbsolutePath()
+    mods {
+        "zombiesmore_yamikingg" {
+            sourceSet(sourceSets.main)
+        }
     }
 }
 
-dependencies {
-    implementation "net.neoforged:neoforge:${neoforge_version}"
-}
+// Include generated resources
+sourceSets.main.resources { srcDir 'src/generated/resources' }
 
 repositories {
     mavenCentral()
-    maven {
-        name = "NeoForged"
-        url = "https://maven.neoforged.net"
-    }
-    // Only keep these if you have dependencies from them
-    maven {
-        name = "Progwml6 maven"
-        url = "https://dvs1.progwml6.com"
-    }
-    maven {
-        name = "ModMaven"
-        url = "https://modmaven.k-4u.nl"
-    }
-    maven {
-        url "https://www.cursemaven.com"
-    }
-    maven {
-        url "https://maven.shedaniel.me"
-    }
-    // REMOVED: maven { url = "https://maven.latmod.com" }
+
 }
 
-processResources {
-    inputs.property "mod_version", mod_version
+dependencies {
+    // NeoForge is now handled by the neoForge {} block - NO implementation line needed!
 
-    filesMatching("META-INF/mods.toml") {
-        expand "mod_version": mod_version
-    }
+    // Example: compile-time only dependency
+    // compileOnly "mezz.jei:jei-${minecraft_version}-neoforge-api:${jei_version}"
+
+    // Example: runtime-only dependency (won't be published)
+    // localRuntime "mezz.jei:jei-${minecraft_version}-neoforge:${jei_version}"
 }
 
-sourceSets.main.resources { srcDir 'src/generated/resources' }
+// Process resources with property expansion (for mods.toml)
+var generateModMetadata = tasks.register("generateModMetadata", ProcessResources) {
+    var replaceProperties = [
+            minecraft_version       : minecraft_version,
+            minecraft_version_range : minecraft_version_range,
+            neo_version             : neoforge_version,
+            loader_version_range    : loader_version_range,
+            mod_id                  : "zombiesmore_yamikingg",
+            mod_name                : "MoZombies Wave",
+            mod_license             : "YOUR_LICENSE",
+            mod_version             : mod_version,
+    ]
+    inputs.properties replaceProperties
+    expand replaceProperties
+    from "src/main/templates"  // Place your mods.toml template here
+    into "build/generated/sources/modMetadata"
+}
 
+// Include generated metadata in resources
+sourceSets.main.resources.srcDir generateModMetadata
+neoForge.ideSyncTask generateModMetadata  // Auto-run on IDE sync
+
+// Optional: Jar manifest configuration
 jar {
     manifest {
         attributes([
@@ -86,6 +116,28 @@ jar {
     }
 }
 
-// tasks.named('jar', Jar).configure {
-//     finalizedBy 'reobfJar'
-// }
+// Publishing configuration (optional)
+publishing {
+    publications {
+        register('mavenJava', MavenPublication) {
+            from components.java
+        }
+    }
+    repositories {
+        maven {
+            url "file://${project.projectDir}/repo"
+        }
+    }
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+}
+
+// Enable source/javadoc downloads for IDEA
+idea {
+    module {
+        downloadSources = true
+        downloadJavadoc = true
+    }
+}

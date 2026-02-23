@@ -37,6 +37,7 @@ import net.minecraft.world.entity.animal.horse.Horse;
 import net.minecraft.world.entity.monster.Creeper;
 import net.minecraft.world.entity.monster.Zombie;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
@@ -44,27 +45,35 @@ import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.phys.AABB;
 import me.yamikingg.zombiesmore.ZombiesMore;
 import me.yamikingg.zombiesmore.init.Registration;
-import net.minecraft.world.phys.Vec3;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.UUID;
 
+
 public class Survivor extends AgeableMob implements NeutralMob {
-	private static final UUID SPEED_MODIFIER_BABY_UUID = UUID.fromString("B9766B59-9566-4402-BC1F-2EE2A276D836");
-	private static final AttributeModifier SPEED_MODIFIER_BABY = new AttributeModifier(SPEED_MODIFIER_BABY_UUID, "Baby speed boost", 0.5D, AttributeModifier.Operation.MULTIPLY_BASE);
-	private static final EntityDataAccessor<Integer> DATA_TYPE_ID = SynchedEntityData.defineId(Survivor.class, EntityDataSerializers.INT);
+
+	private static final String SPEED_MODIFIER_BABY_NAME = "baby_speed_boost";
+	private static final String SPEED_MODIFIER_ATTACKING_NAME = "attacking_speed_boost";
+
+
+	private static final AttributeModifier SPEED_MODIFIER_BABY = new AttributeModifier(
+			SPEED_MODIFIER_BABY_NAME, 0.5D, AttributeModifier.Operation.ADD_MULTIPLIED_BASE);
+	private static final AttributeModifier SPEED_MODIFIER_ATTACKING = new AttributeModifier(
+			SPEED_MODIFIER_ATTACKING_NAME, 0.05D, AttributeModifier.Operation.ADD_VALUE);
+
+	private static final EntityDataAccessor<Integer> DATA_TYPE_ID =
+			SynchedEntityData.defineId(Survivor.class, EntityDataSerializers.INT);
+
 	private static final UniformInt ALERT_INTERVAL = TimeUtil.rangeOfSeconds(4, 6);
 	private static final UniformInt PERSISTENT_ANGER_TIME = TimeUtil.rangeOfSeconds(20, 39);
 
 	public static final String NAME = "survivor";
 	public static final int ID = 27;
-
-	private static final UUID SPEED_MODIFIER_ATTACKING_UUID = UUID.fromString("49455A49-7EC5-45BA-B886-3B90B23A1718");
-	private static final AttributeModifier SPEED_MODIFIER_ATTACKING = new AttributeModifier(SPEED_MODIFIER_ATTACKING_UUID, "Attacking speed boost", 0.05D, AttributeModifier.Operation.ADDITION);
 
 	private int ticksUntilNextAlert;
 	private UUID persistentAngerTarget;
@@ -78,14 +87,15 @@ public class Survivor extends AgeableMob implements NeutralMob {
 	@Override
 	public AgeableMob getBreedOffspring(ServerLevel serverLevel, AgeableMob parent) {
 		Survivor survivor = new Survivor(Registration.SURVIVOR.get(), serverLevel);
-		survivor.finalizeSpawn(serverLevel, serverLevel.getCurrentDifficultyAt(survivor.blockPosition()), MobSpawnType.BREEDING, null, null);
+		survivor.finalizeSpawn(serverLevel, serverLevel.getCurrentDifficultyAt(survivor.blockPosition()),
+				MobSpawnType.BREEDING, null);
 		return survivor;
 	}
 
 	@Override
-	protected void defineSynchedData() {
-		super.defineSynchedData();
-		this.entityData.define(DATA_TYPE_ID, 0);
+	protected void defineSynchedData(SynchedEntityData.Builder builder) {
+		super.defineSynchedData(builder);
+		builder.define(DATA_TYPE_ID, 0); // default value = 0
 	}
 
 	@Override
@@ -101,10 +111,10 @@ public class Survivor extends AgeableMob implements NeutralMob {
 		this.getEntityData().set(DATA_TYPE_ID, type);
 	}
 
-
-	protected int getExperienceReward(Player player) {
+	@Override
+	public int getExperienceReward() {
 		if (this.isBaby()) {
-			this.xpReward = (int)((float)this.xpReward * 2.5F);
+			this.xpReward = (int) ((float) this.xpReward * 2.5F);
 		}
 		return super.getExperienceReward();
 	}
@@ -154,11 +164,9 @@ public class Survivor extends AgeableMob implements NeutralMob {
 		if (this.getTarget() == null && target != null) {
 			this.ticksUntilNextAlert = ALERT_INTERVAL.sample(this.random);
 		}
-
-		if (target instanceof Player) {
-			this.setLastHurtByPlayer((Player)target);
+		if (target instanceof Player player) {
+			this.setLastHurtByPlayer(player);
 		}
-
 		super.setTarget(target);
 	}
 
@@ -174,39 +182,38 @@ public class Survivor extends AgeableMob implements NeutralMob {
 		this.updateSwingTime();
 		this.updateNoActionTime();
 
-		// Heal with food if health is low
 		ItemStack mainHandItem = this.getMainHandItem();
-		if (mainHandItem.isEdible() && this.getHealth() < this.getMaxHealth() && this.canEat(true)) {
+		FoodProperties food = mainHandItem.getFoodProperties(this);
+		if (food != null && this.getHealth() < this.getMaxHealth()) {
 			this.eat(this.level(), mainHandItem);
 		}
 
 		super.aiStep();
 	}
 
-	private boolean canEat(boolean b) {
-		return true;
-	}
-
 	@Override
 	protected void customServerAiStep() {
 		AttributeInstance movementSpeed = this.getAttribute(Attributes.MOVEMENT_SPEED);
-		if (this.isAngry()) {
-			if (!this.isBaby() && !movementSpeed.hasModifier(SPEED_MODIFIER_ATTACKING)) {
+		if (movementSpeed != null) {
+			// Remove by the modifier object itself, not by UUID
+			movementSpeed.removeModifier(SPEED_MODIFIER_ATTACKING);
+			movementSpeed.removeModifier(SPEED_MODIFIER_BABY);
+
+			if (this.isAngry() && !this.isBaby()) {
 				movementSpeed.addTransientModifier(SPEED_MODIFIER_ATTACKING);
 			}
-		} else if (movementSpeed.hasModifier(SPEED_MODIFIER_ATTACKING)) {
-			movementSpeed.removeModifier(SPEED_MODIFIER_ATTACKING.getId());
+			if (this.isBaby()) {
+				movementSpeed.addTransientModifier(SPEED_MODIFIER_BABY);
+			}
 		}
 
-		this.updatePersistentAnger((ServerLevel)this.level(), true);
+		this.updatePersistentAnger((ServerLevel) this.level(), true);
 		if (this.getTarget() != null) {
 			this.maybeAlertOthers();
 		}
-
 		if (this.isAngry()) {
 			this.lastHurtByPlayerTime = this.tickCount;
 		}
-
 		super.customServerAiStep();
 	}
 
@@ -223,7 +230,8 @@ public class Survivor extends AgeableMob implements NeutralMob {
 
 	private void alertOthers() {
 		double followRange = this.getAttributeValue(Attributes.FOLLOW_RANGE);
-		AABB alertArea = new AABB(this.getX() - followRange, this.getY() - 10.0D, this.getZ() - followRange,
+		AABB alertArea = new AABB(
+				this.getX() - followRange, this.getY() - 10.0D, this.getZ() - followRange,
 				this.getX() + followRange, this.getY() + 10.0D, this.getZ() + followRange);
 
 		List<Survivor> nearbySurvivors = this.level().getEntitiesOfClass(Survivor.class, alertArea);
@@ -235,11 +243,11 @@ public class Survivor extends AgeableMob implements NeutralMob {
 	}
 
 	@Override
-	protected void populateDefaultEquipmentSlots(@NotNull RandomSource randomSource, @NotNull DifficultyInstance difficulty) {
+	protected void populateDefaultEquipmentSlots(@NotNull RandomSource randomSource,
+												 @NotNull DifficultyInstance difficulty) {
 		super.populateDefaultEquipmentSlots(randomSource, difficulty);
 		if (this.random.nextFloat() < (this.level().getDifficulty() == Difficulty.HARD ? 0.45F : 0.20F)) {
 			int i = this.random.nextInt(3);
-
 			if (i == 0) {
 				if (this.random.nextFloat() < 0.25F)
 					this.setItemSlot(EquipmentSlot.LEGS, new ItemStack(Items.IRON_LEGGINGS));
@@ -260,14 +268,17 @@ public class Survivor extends AgeableMob implements NeutralMob {
 
 	@Nullable
 	@Override
-	public SpawnGroupData finalizeSpawn(@NotNull ServerLevelAccessor serverLevelAccessor, @NotNull DifficultyInstance difficulty, @NotNull MobSpawnType spawnType, @Nullable SpawnGroupData spawnGroupData, @Nullable CompoundTag compoundTag) {
+	public SpawnGroupData finalizeSpawn(@NotNull ServerLevelAccessor serverLevelAccessor,
+										@NotNull DifficultyInstance difficulty,
+										@NotNull MobSpawnType spawnType,
+										@Nullable SpawnGroupData spawnGroupData) {
 		float f = difficulty.getSpecialMultiplier();
 		this.setCanPickUpLoot(this.random.nextFloat() < 0.55F * f);
 
 		if (spawnGroupData == null) {
 			boolean shouldSpawnBaby = serverLevelAccessor.getRandom().nextFloat() < 0.05F;
 			int type = serverLevelAccessor.getRandom().nextFloat() < 0.40F ? 1 : 0;
-			spawnGroupData = new Survivor.GroupData(true, shouldSpawnBaby, type);
+			spawnGroupData = new GroupData(true, shouldSpawnBaby, type);
 		}
 
 		if (spawnGroupData instanceof GroupData survivorGroupData) {
@@ -276,7 +287,8 @@ public class Survivor extends AgeableMob implements NeutralMob {
 			if (survivorGroupData.canSpawnJockey) {
 				if (serverLevelAccessor.getRandom().nextFloat() < 0.05D) {
 					List<Horse> nearbyHorses = serverLevelAccessor.getEntitiesOfClass(Horse.class,
-							this.getBoundingBox().inflate(5.0D, 3.0D, 5.0D), EntitySelector.ENTITY_NOT_BEING_RIDDEN);
+							this.getBoundingBox().inflate(5.0D, 3.0D, 5.0D),
+							EntitySelector.ENTITY_NOT_BEING_RIDDEN);
 
 					if (!nearbyHorses.isEmpty()) {
 						Horse horse = nearbyHorses.get(0);
@@ -288,7 +300,7 @@ public class Survivor extends AgeableMob implements NeutralMob {
 					Horse horse = EntityType.HORSE.create(this.level());
 					if (horse != null) {
 						horse.moveTo(this.getX(), this.getY(), this.getZ(), this.getYRot(), 0.0F);
-						horse.finalizeSpawn(serverLevelAccessor, difficulty, MobSpawnType.JOCKEY, null, null);
+						horse.finalizeSpawn(serverLevelAccessor, difficulty, MobSpawnType.JOCKEY, null);
 						horse.setTamed(true);
 						horse.setOwnerUUID(this.getUUID());
 						this.startRiding(horse);
@@ -303,7 +315,7 @@ public class Survivor extends AgeableMob implements NeutralMob {
 		}
 
 		this.populateDefaultEquipmentSlots(this.getRandom(), difficulty);
-		return super.finalizeSpawn(serverLevelAccessor, difficulty, spawnType, spawnGroupData, compoundTag);
+		return super.finalizeSpawn(serverLevelAccessor, difficulty, spawnType, spawnGroupData);
 	}
 
 	@Override
@@ -323,11 +335,6 @@ public class Survivor extends AgeableMob implements NeutralMob {
 
 	protected ItemStack getSkull() {
 		return new ItemStack(Items.PLAYER_HEAD);
-	}
-
-	@Override
-	public MobType getMobType() {
-		return MobType.UNDEFINED;
 	}
 
 	@Override
@@ -362,31 +369,16 @@ public class Survivor extends AgeableMob implements NeutralMob {
 		}
 	}
 
-	// ================ UPDATED MOUNTING METHODS FOR 1.20.2 ================
-
 	@Override
-	protected void positionRider(Entity pPassenger, Entity.MoveFunction pCallback) {
-		if (this.hasPassenger(pPassenger)) {
-			// Calculate the default Y position (entity's Y + passenger's default offset)
-			double defaultY = this.getY() + this.getPassengersRidingOffset(pPassenger) + pPassenger.getMyRidingOffset(this);
-			// Apply your custom offset: -0.45D for adults, 0.0D for babies
+	public void positionRider(Entity passenger, Entity.MoveFunction callback) {
+		if (this.hasPassenger(passenger)) {
+			double yOffset = this.getY() + this.getPassengerRidingPosition(passenger).y;
 			double customYOffset = this.isBaby() ? 0.0D : -0.45D;
-
-			// Set the final position with your custom offset
-			pCallback.accept(pPassenger, this.getX(), defaultY + customYOffset, this.getZ());
+			callback.accept(passenger, this.getX(), yOffset + customYOffset, this.getZ());
 		} else {
-			super.positionRider(pPassenger, pCallback);
+			super.positionRider(passenger, callback);
 		}
 	}
-
-	// Helper method for getting the default passenger offset (optional, but good to have)
-	public double getPassengersRidingOffset(Entity pPassenger) {
-		// You can customize this based on the passenger if needed
-		// For now, return the default from Entity class logic
-		return 0.0D;
-	}
-
-	// ================ END OF UPDATED METHODS ================
 
 	public static class GroupData extends AgeableMob.AgeableMobGroupData {
 		public final boolean canSpawnJockey;
@@ -409,27 +401,32 @@ public class Survivor extends AgeableMob implements NeutralMob {
 				.add(Attributes.MAX_HEALTH, 20.0D);
 	}
 
-	// Client-side renderer classes
+	// ==================== CLIENT-SIDE ====================
+
 	@OnlyIn(Dist.CLIENT)
 	public static class SurvivorModel<S extends Survivor> extends HumanoidModel<S> {
 		public static final ModelLayerLocation LAYER_LOCATION =
-				new ModelLayerLocation(new ResourceLocation(ZombiesMore.MODID, NAME), "main");
+				new ModelLayerLocation(ResourceLocation.tryBuild(ZombiesMore.MODID, NAME), "main");
 
 		public SurvivorModel(ModelPart modelPart) {
 			super(modelPart);
 		}
 
+		// This NeoForge 1.20.6 build uses the old 8-arg renderToBuffer with float RGBA
 		@Override
 		public void renderToBuffer(@NotNull PoseStack poseStack, @NotNull VertexConsumer vertexConsumer,
-								   int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
+								   int packedLight, int packedOverlay,
+								   float red, float green, float blue, float alpha) {
 			super.renderToBuffer(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
 		}
 	}
 
 	@OnlyIn(Dist.CLIENT)
 	public static class SurvivorRenderer extends HumanoidMobRenderer<Survivor, SurvivorModel<Survivor>> {
-		private static final ResourceLocation MALE_TEXTURE = new ResourceLocation(ZombiesMore.MODID, "textures/entity/survivor_0.png");
-		private static final ResourceLocation FEMALE_TEXTURE = new ResourceLocation(ZombiesMore.MODID, "textures/entity/survivor_1.png");
+		private static final ResourceLocation MALE_TEXTURE =
+				ResourceLocation.tryBuild(ZombiesMore.MODID, "textures/entity/survivor_0.png");
+		private static final ResourceLocation FEMALE_TEXTURE =
+				ResourceLocation.tryBuild(ZombiesMore.MODID, "textures/entity/survivor_1.png");
 
 		private final SurvivorModel<Survivor> normalModel;
 		private final SurvivorModel<Survivor> slimModel;
@@ -449,17 +446,14 @@ public class Survivor extends AgeableMob implements NeutralMob {
 		@Override
 		public void render(Survivor survivor, float entityYaw, float partialTicks,
 						   PoseStack poseStack, MultiBufferSource buffer, int packedLight) {
-			// Switch between normal and slim model based on survivor type
 			int type = survivor.getSurvivorType();
 			this.model = (type >= 1) ? slimModel : normalModel;
-
 			super.render(survivor, entityYaw, partialTicks, poseStack, buffer, packedLight);
 		}
 
 		@Override
 		public ResourceLocation getTextureLocation(Survivor entity) {
-			int type = entity.getSurvivorType();
-			return (type >= 1) ? FEMALE_TEXTURE : MALE_TEXTURE;
+			return (entity.getSurvivorType() >= 1) ? FEMALE_TEXTURE : MALE_TEXTURE;
 		}
 	}
 }

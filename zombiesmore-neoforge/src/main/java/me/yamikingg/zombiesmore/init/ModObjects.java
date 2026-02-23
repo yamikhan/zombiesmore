@@ -10,12 +10,13 @@ import net.minecraft.world.entity.monster.ZombifiedPiglin;
 import net.minecraft.world.entity.npc.Villager;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.neoforge.event.entity.EntityJoinLevelEvent;
 import me.yamikingg.zombiesmore.entity.ZombieNotch;
 import me.yamikingg.zombiesmore.ZombiesMore;
 
-@Mod.EventBusSubscriber(modid = ZombiesMore.MODID, bus = Mod.EventBusSubscriber.Bus.FORGE)
+@EventBusSubscriber(modid = ZombiesMore.MODID, bus = EventBusSubscriber.Bus.GAME)
 public class ModObjects {
 
     @SubscribeEvent

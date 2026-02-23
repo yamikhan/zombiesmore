@@ -10,6 +10,7 @@ import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.item.*;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.neoforge.common.DeferredSpawnEggItem;
 import net.neoforged.neoforge.event.entity.EntityAttributeCreationEvent;
@@ -20,7 +21,7 @@ import me.yamikingg.zombiesmore.item.DiscoGlassesMaterial;
 
 import java.util.function.Supplier;
 
-@Mod.EventBusSubscriber(modid = ZombiesMore.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
+@EventBusSubscriber(modid = ZombiesMore.MODID, bus = EventBusSubscriber.Bus.MOD)
 public class Registration {
 
 	public static final DeferredRegister.Items ITEMS = DeferredRegister.createItems(ZombiesMore.MODID);

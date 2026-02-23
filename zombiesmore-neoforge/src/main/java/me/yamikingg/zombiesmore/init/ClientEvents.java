@@ -12,13 +12,14 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.neoforge.client.event.EntityRenderersEvent;
 import me.yamikingg.zombiesmore.Config;
 import me.yamikingg.zombiesmore.ZombiesMore;
 
 
-@Mod.EventBusSubscriber( modid = ZombiesMore.MODID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
+@EventBusSubscriber(modid = ZombiesMore.MODID, bus = EventBusSubscriber.Bus.MOD)
 public class ClientEvents {
 
 
