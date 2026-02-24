@@ -24,8 +24,7 @@ public class ZombieCyborg extends AbstractMoZombie {
 		return 1.0F;
 	}
 
-	// 1.20.1 requires proper finalizeSpawn method for spawning
-	@Override
+
 	@Nullable
 	public net.minecraft.world.entity.SpawnGroupData finalizeSpawn(
 			ServerLevelAccessor level,
@@ -34,7 +33,7 @@ public class ZombieCyborg extends AbstractMoZombie {
 			@Nullable net.minecraft.world.entity.SpawnGroupData spawnData,
 			@Nullable CompoundTag dataTag) {
 
-		net.minecraft.world.entity.SpawnGroupData data = super.finalizeSpawn(level, difficulty, spawnType, spawnData, dataTag);
+		net.minecraft.world.entity.SpawnGroupData data = super.finalizeSpawn(level, difficulty, spawnType, spawnData);
 		return data;
 	}
 

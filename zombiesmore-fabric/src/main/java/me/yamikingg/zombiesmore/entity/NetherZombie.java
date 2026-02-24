@@ -70,7 +70,7 @@ public class NetherZombie extends AbstractMoZombie {
 		boolean flag = super.doHurtTarget(entity);
 		if (flag && entity instanceof net.minecraft.world.entity.LivingEntity) {
 			// Set target on fire for 3 seconds
-			entity.setSecondsOnFire(3);
+			entity.setRemainingFireTicks(3);
 		}
 		return flag;
 	}

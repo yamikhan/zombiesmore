@@ -16,6 +16,7 @@ import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.HumanoidMobRenderer;
 import net.minecraft.client.renderer.entity.layers.HumanoidArmorLayer;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -60,7 +61,7 @@ import java.util.UUID;
 public class Survivor extends AgeableMob implements NeutralMob {
 	private static final UUID SPEED_MODIFIER_BABY_UUID = UUID.fromString("B9766B59-9566-4402-BC1F-2EE2A276D836");
 	private static final AttributeModifier SPEED_MODIFIER_BABY = new AttributeModifier(
-			SPEED_MODIFIER_BABY_UUID, "Baby speed boost", 0.5D, AttributeModifier.Operation.MULTIPLY_BASE);
+			SPEED_MODIFIER_BABY_UUID, "Baby speed boost", 0.5D, AttributeModifier.Operation.ADD_MULTIPLIED_BASE);
 
 	private static final EntityDataAccessor<Integer> DATA_TYPE_ID = SynchedEntityData.defineId(
 			Survivor.class, EntityDataSerializers.INT);
@@ -73,7 +74,7 @@ public class Survivor extends AgeableMob implements NeutralMob {
 
 	private static final UUID SPEED_MODIFIER_ATTACKING_UUID = UUID.fromString("49455A49-7EC5-45BA-B886-3B90B23A1718");
 	private static final AttributeModifier SPEED_MODIFIER_ATTACKING = new AttributeModifier(
-			SPEED_MODIFIER_ATTACKING_UUID, "Attacking speed boost", 0.05D, AttributeModifier.Operation.ADDITION);
+			SPEED_MODIFIER_ATTACKING_UUID, "Attacking speed boost", 0.05D, AttributeModifier.Operation.ADD_VALUE);
 
 	private int ticksUntilNextAlert;
 	private UUID persistentAngerTarget;
@@ -93,9 +94,9 @@ public class Survivor extends AgeableMob implements NeutralMob {
 	}
 
 	@Override
-	protected void defineSynchedData() {
-		super.defineSynchedData();
-		this.entityData.define(DATA_TYPE_ID, 0);
+	protected void defineSynchedData(SynchedEntityData.Builder builder) {
+		super.defineSynchedData(builder);
+		builder.define(DATA_TYPE_ID, 0);
 	}
 
 	@Override
@@ -189,7 +190,7 @@ public class Survivor extends AgeableMob implements NeutralMob {
 		this.updateNoActionTime();
 
 		ItemStack mainHandItem = this.getMainHandItem();
-		if (mainHandItem.isEdible() && this.getHealth() < this.getMaxHealth() && this.canEat(true)) {
+		if (mainHandItem.has(DataComponents.FOOD) && this.getHealth() < this.getMaxHealth()) {
 			this.eat(this.level(), mainHandItem);
 		}
 		super.aiStep();
@@ -202,19 +203,20 @@ public class Survivor extends AgeableMob implements NeutralMob {
 	@Override
 	protected void customServerAiStep() {
 		AttributeInstance movementSpeed = this.getAttribute(Attributes.MOVEMENT_SPEED);
-		if (this.isAngry()) {
-			if (!this.isBaby() && movementSpeed != null && !movementSpeed.hasModifier(SPEED_MODIFIER_ATTACKING)) {
-				movementSpeed.addTransientModifier(SPEED_MODIFIER_ATTACKING);
+		if (movementSpeed != null) {
+			if (this.isAngry()) {
+				if (!this.isBaby() && movementSpeed.getModifier(SPEED_MODIFIER_ATTACKING_UUID) == null) {
+					movementSpeed.addOrUpdateTransientModifier(SPEED_MODIFIER_ATTACKING);
+				}
+			} else {
+				movementSpeed.removeModifier(SPEED_MODIFIER_ATTACKING_UUID);
 			}
-		} else if (movementSpeed != null && movementSpeed.hasModifier(SPEED_MODIFIER_ATTACKING)) {
-			movementSpeed.removeModifier(SPEED_MODIFIER_ATTACKING.getId());
 		}
 
 		this.updatePersistentAnger((ServerLevel) this.level(), true);
 		if (this.getTarget() != null) {
 			this.maybeAlertOthers();
 		}
-
 		if (this.isAngry()) {
 			this.lastHurtByPlayerTime = this.tickCount;
 		}
@@ -274,7 +276,6 @@ public class Survivor extends AgeableMob implements NeutralMob {
 	}
 
 	@Nullable
-	@Override
 	public SpawnGroupData finalizeSpawn(@NotNull ServerLevelAccessor serverLevelAccessor,
 										@NotNull DifficultyInstance difficulty,
 										@NotNull MobSpawnType spawnType,
@@ -307,11 +308,11 @@ public class Survivor extends AgeableMob implements NeutralMob {
 					Horse horse = EntityType.HORSE.create(this.level());
 					if (horse != null) {
 						horse.moveTo(this.getX(), this.getY(), this.getZ(), this.getYRot(), 0.0F);
-						horse.finalizeSpawn(serverLevelAccessor, difficulty, MobSpawnType.JOCKEY, null, null);
+						horse.finalizeSpawn((ServerLevel) this.level(), difficulty, MobSpawnType.JOCKEY, null);
 						horse.setTamed(true);
 						horse.setOwnerUUID(this.getUUID());
 						this.startRiding(horse);
-						serverLevelAccessor.addFreshEntity(horse);
+						this.level().addFreshEntity(horse);
 					}
 				}
 			}
@@ -322,7 +323,7 @@ public class Survivor extends AgeableMob implements NeutralMob {
 		}
 
 		this.populateDefaultEquipmentSlots(this.getRandom(), difficulty);
-		return super.finalizeSpawn(serverLevelAccessor, difficulty, spawnType, spawnGroupData, compoundTag);
+		return super.finalizeSpawn(serverLevelAccessor, difficulty, spawnType, spawnGroupData);
 	}
 
 	@Override
@@ -344,10 +345,6 @@ public class Survivor extends AgeableMob implements NeutralMob {
 		return new ItemStack(Items.PLAYER_HEAD);
 	}
 
-	@Override
-	public MobType getMobType() {
-		return MobType.UNDEFINED;
-	}
 
 	@Override
 	protected SoundEvent getHurtSound(@NotNull DamageSource ds) {
@@ -381,13 +378,12 @@ public class Survivor extends AgeableMob implements NeutralMob {
 		}
 	}
 
-	// ============== Mounting Methods (1.20.2 Compatible) ==============
 	@Override
-	protected void positionRider(Entity passenger, MoveFunction callback) {
+	protected void positionRider(Entity passenger, Entity.MoveFunction callback) {
 		if (this.hasPassenger(passenger)) {
-			double defaultY = this.getY() + this.getPassengersRidingOffset(passenger) + passenger.getMyRidingOffset(this);
+			double vehicleTop    = this.getY() + this.getBbHeight();
 			double customYOffset = this.isBaby() ? 0.0D : -0.45D;
-			callback.accept(passenger, this.getX(), defaultY + customYOffset, this.getZ());
+			callback.accept(passenger, this.getX(), vehicleTop + customYOffset, this.getZ());
 		} else {
 			super.positionRider(passenger, callback);
 		}

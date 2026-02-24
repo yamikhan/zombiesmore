@@ -37,7 +37,7 @@ public class ZombieDwarf extends AbstractMoZombie {
 	public static int ID = 15;
 	public static String NAME = "zombie_dwarf";
 
-	@Override
+
 	@Nullable
 	public net.minecraft.world.entity.SpawnGroupData finalizeSpawn(
 			ServerLevelAccessor level,
@@ -46,7 +46,7 @@ public class ZombieDwarf extends AbstractMoZombie {
 			@Nullable net.minecraft.world.entity.SpawnGroupData spawnData,
 			@Nullable CompoundTag dataTag) {
 
-        return super.finalizeSpawn(level, difficulty, spawnType, spawnData, dataTag);
+        return super.finalizeSpawn(level, difficulty, spawnType, spawnData);
 	}
 
 	// Optional: Override populateDefaultEquipmentSlots if needed
@@ -58,11 +58,12 @@ public class ZombieDwarf extends AbstractMoZombie {
 	}
 
 	@Override
-	public EntityDimensions getDimensions(Pose pose) {
+	public EntityDimensions getDefaultDimensions(Pose pose) {
 		return this.isBaby()
 				? super.getDimensions(pose).scale(0.6F)
-				: new EntityDimensions(0.7F, 1.3F, true); // Wider & shorter than default zombie
+				: EntityDimensions.scalable(0.7F, 1.3F);
 	}
+
 
 	public static AttributeSupplier.Builder createAttributes() {
 		return Monster.createMonsterAttributes()
@@ -75,10 +76,6 @@ public class ZombieDwarf extends AbstractMoZombie {
 				.add(Attributes.MAX_HEALTH, 25.0D);
 	}
 
-	@Override
-	protected float getStandingEyeHeight(Pose pose, EntityDimensions dimensions) {
-		return this.isBaby() ? 0.6F : 1.05F; // Lower eye level for dwarf
-	}
 
 	public static class RendererZombieDwarf extends HumanoidMobRenderer<AbstractMoZombie, ZombieDwarfModel<AbstractMoZombie>> {
 		public final ResourceLocation TEXTURE = new ResourceLocation(ZombiesMoreFabric.MODID, "textures/entity/" + NAME + ".png");

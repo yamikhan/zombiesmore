@@ -64,9 +64,9 @@ public class ZombieCreeper extends Creeper {
 	private boolean canBreakDoors;
 
 	@Override
-	protected void defineSynchedData() {
-		super.defineSynchedData();
-		this.entityData.define(DATA_CONVERTING_ID, false);
+	protected void defineSynchedData(SynchedEntityData.Builder builder) {
+		super.defineSynchedData(builder);
+		builder.define(DATA_CONVERTING_ID, false);
 	}
 
 	@Override
@@ -181,7 +181,7 @@ public class ZombieCreeper extends Creeper {
 			}
 
 			if (flag) {
-				this.setSecondsOnFire(8);
+				this.setRemainingFireTicks(8);
 			}
 		}
 
@@ -278,11 +278,10 @@ public class ZombieCreeper extends Creeper {
 				.add(Attributes.MAX_HEALTH, 25.0D);
 	}
 
-	// Add these methods for proper spawning and equipment if needed
-	@Override
+
 	@Nullable
 	public SpawnGroupData finalizeSpawn(ServerLevelAccessor level, DifficultyInstance difficulty, MobSpawnType spawnType, @Nullable SpawnGroupData spawnData, @Nullable CompoundTag dataTag) {
-		SpawnGroupData data = super.finalizeSpawn(level, difficulty, spawnType, spawnData, dataTag);
+		SpawnGroupData data = super.finalizeSpawn(level, difficulty, spawnType, spawnData);
 		this.populateDefaultEquipmentSlots(level.getRandom(), difficulty);
 		return data;
 	}
