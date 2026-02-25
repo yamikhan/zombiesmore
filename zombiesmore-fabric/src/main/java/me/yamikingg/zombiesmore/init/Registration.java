@@ -35,10 +35,10 @@ public class Registration {
 
 	// ============== SOUND EVENTS ==============
 	public static final SoundEvent HURT_SURVIVOR = SoundEvent.createVariableRangeEvent(
-			new ResourceLocation(ZombiesMoreFabric.MODID, "hurt_survivor")
+			ResourceLocation.fromNamespaceAndPath(ZombiesMoreFabric.MODID, "hurt_survivor")
 	);
 	public static final SoundEvent HURT_SURVIVOR_FEMALE = SoundEvent.createVariableRangeEvent(
-			new ResourceLocation(ZombiesMoreFabric.MODID, "hurt_survivor_female")
+			ResourceLocation.fromNamespaceAndPath(ZombiesMoreFabric.MODID, "hurt_survivor_female")
 	);
 
 	// ============== ENTITIES ==============
@@ -187,6 +187,6 @@ public class Registration {
 	}
 
 	private static ResourceLocation id(String path) {
-		return new ResourceLocation(ZombiesMoreFabric.MODID, path);
+		return ResourceLocation.fromNamespaceAndPath(ZombiesMoreFabric.MODID, path);
 	}
 }

@@ -6,7 +6,6 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.Level;
-import org.jetbrains.annotations.NotNull;
 
 public class DiscoZombie extends AbstractMoZombie {
 
@@ -18,8 +17,8 @@ public class DiscoZombie extends AbstractMoZombie {
 	}
 
 	@Override
-	public @NotNull SoundEvent getAmbientSound() {
-		return SoundEvents.MUSIC_DISC_STAL;
+	public SoundEvent getAmbientSound() {
+		return SoundEvents.HUSK_AMBIENT;
 	}
 
 	@Override

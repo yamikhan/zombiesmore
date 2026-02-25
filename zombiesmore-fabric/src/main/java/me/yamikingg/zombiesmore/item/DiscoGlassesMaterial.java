@@ -42,7 +42,7 @@ public class DiscoGlassesMaterial {
             float knockbackResistance,
             Ingredient repairIngredient
     ) {
-        ResourceLocation id = new ResourceLocation(ZombiesMoreFabric.MODID, name);
+        ResourceLocation id = ResourceLocation.fromNamespaceAndPath(ZombiesMoreFabric.MODID, name);
 
         ArmorMaterial material = new ArmorMaterial(
                 defense,
