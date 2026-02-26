@@ -27,7 +27,6 @@ Adds various themed zombie variants to the game including:
 - Zombie PA
 - Zombie Pirate
 - Zombie Creeper (Hybrid)
-- Giant (Vanilla enhanced)
 - Survivor (Friendly NPC)
 
 Features custom spawn placements and behaviors for each zombie type.
@@ -38,6 +37,6 @@ issueTrackerURL=""
 [[dependencies.zombiesmore_yamikingg]]
 modId="minecraft"
 mandatory=true
-versionRange="[1.20.3,1.21)"
+versionRange="[1.21.1,1.22)"
 ordering="NONE"
 side="BOTH"

@@ -1,5 +1,5 @@
 {
-  "itemGroup.zombiesmore_yamikingg": "Mo'Zombies Wave",
+  "itemGroup.zombiesmore_yamikingg": "ZombiesMore",
   "subtitles.zombiesmore_yamikingg.hurt_survivor": "Huuh",
   "item.zombiesmore_yamikingg.disco_glasses":"Disco Glasses",
   "entity.zombiesmore_yamikingg.zombie_notch":"Zombie Notch",
@@ -12,7 +12,6 @@
   "entity.zombiesmore_yamikingg.zombie_chef":"Zombie Chef",
   "entity.zombiesmore_yamikingg.zombie_king":"Zombie King",
   "entity.zombiesmore_yamikingg.nether_zombie":"Nether Zombie",
-  "item.zombiesmore_yamikingg.giant_spawn_egg":"Giant Spawn Egg",
   "entity.zombiesmore_yamikingg.zombie_herobrine":"Zombie Herobrine",
   "entity.zombiesmore_yamikingg.zombie_dwarf":"Zombie Dwarf",
   "entity.zombiesmore_yamikingg.zombie_pa":"Zombie Pa",
@@ -30,7 +29,5 @@
   "item.zombiesmore_yamikingg.zombie_herobrine_spawn_egg":"Zombie Herobrine Spawn Egg",
   "item.zombiesmore_yamikingg.zombie_dwarf_spawn_egg":"Zombie Dwarf Spawn Egg",
   "item.zombiesmore_yamikingg.zombie_pa_spawn_egg":"Zombie Pa Spawn Egg",
-  "item.zombiesmore_yamikingg.zombie_creeper_spawn_egg":"Zombie Creeper Spawn Egg",
-  "item.zombiesmore_yamikingg.zombie_evoker_spawn_egg": "Zombie Evoker Spawn Egg",
-  "item.zombiesmore_yamikingg.totem_of_amulets": "totem of Amulets"
+  "item.zombiesmore_yamikingg.zombie_creeper_spawn_egg":"Zombie Creeper Spawn Egg"
 }

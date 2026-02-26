@@ -33,7 +33,7 @@ public class DiscoGlassesMaterial {
                     () -> Ingredient.of(Items.GLASS),
                     List.of(
                             new ArmorMaterial.Layer(
-                                    new ResourceLocation(ZombiesMore.MODID, "glasses")
+                                    ResourceLocation.fromNamespaceAndPath(ZombiesMore.MODID, "glasses")
                             )
                     ),
                     0.0F,

@@ -173,7 +173,7 @@ public class ZombieCreeper extends Creeper {
 				if (itemstack.isDamageableItem()) {
 					itemstack.setDamageValue(itemstack.getDamageValue() + this.random.nextInt(2));
 					if (itemstack.getDamageValue() >= itemstack.getMaxDamage()) {
-						this.broadcastBreakEvent(EquipmentSlot.HEAD);
+						this.canUseSlot(EquipmentSlot.HEAD);
 						this.setItemSlot(EquipmentSlot.HEAD, ItemStack.EMPTY);
 					}
 				}
@@ -301,7 +301,7 @@ public class ZombieCreeper extends Creeper {
 
 		@Override
 		public ResourceLocation getTextureLocation(Creeper entity) {
-			return new ResourceLocation(ZombiesMore.MODID, "textures/entity/" + NAME + ".png");
+			return ResourceLocation.fromNamespaceAndPath(ZombiesMore.MODID, "textures/entity/" + NAME + ".png");
 		}
 	}
 }

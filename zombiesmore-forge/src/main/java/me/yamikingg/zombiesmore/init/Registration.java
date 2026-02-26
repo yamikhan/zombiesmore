@@ -43,17 +43,9 @@ public class Registration {
 					new Item.Properties()
 			)
 	);
-	public static final RegistryObject<SoundEvent> HURT_SURVIVOR = SOUNDS.register("hurt_survivor", () -> SoundEvent.createVariableRangeEvent(new ResourceLocation(ZombiesMore.MODID, "hurt_survivor")));
-	public static final RegistryObject<SoundEvent> HURT_SURVIVOR_FEMALE = SOUNDS.register("hurt_survivor_female", () -> SoundEvent.createVariableRangeEvent(new ResourceLocation(ZombiesMore.MODID, "hurt_survivor_female")));
+	public static final RegistryObject<SoundEvent> HURT_SURVIVOR = SOUNDS.register("hurt_survivor", () -> SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath(ZombiesMore.MODID, "hurt_survivor")));
+	public static final RegistryObject<SoundEvent> HURT_SURVIVOR_FEMALE = SOUNDS.register("hurt_survivor_female", () -> SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath(ZombiesMore.MODID, "hurt_survivor_female")));
 
-	public static final RegistryObject<Item> GIANT_SPAWN_EGG = ITEMS.register("giant_spawn_egg", () ->
-			new ForgeSpawnEggItem(
-					() -> EntityType.GIANT,  // ← CRITICAL FIX
-					44975,
-					7969893,
-					new Item.Properties()
-			)
-	);
 	public static final RegistryObject<EntityType<Survivor>> SURVIVOR = ENTITIES.register(Survivor.NAME, () -> EntityType.Builder.of(Survivor::new, MobCategory.CREATURE).sized(0.6f, 1.95F).build(Survivor.NAME));
 
 	public static final RegistryObject<Item> SURVIVOR_SPAWN_EGG = ITEMS.register(Survivor.NAME + "_spawn_egg", () -> new ForgeSpawnEggItem(SURVIVOR, -9611202, -12053227, new Item.Properties()));
@@ -104,7 +96,6 @@ public class Registration {
 					.icon(() -> new ItemStack(DISCO_GLASSES.get()))
 					.displayItems((parameters, output) -> {
 						output.accept(DISCO_GLASSES.get());
-						output.accept(GIANT_SPAWN_EGG.get());
 						output.accept(SURVIVOR_SPAWN_EGG.get());
 						output.accept(DISCO_SPAWN_EGG.get());
 						output.accept(CHEF_SPAWN_EGG.get());
