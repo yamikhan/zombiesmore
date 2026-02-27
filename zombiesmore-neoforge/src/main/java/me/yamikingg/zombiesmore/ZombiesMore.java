@@ -14,7 +14,7 @@ import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.neoforge.event.entity.EntityAttributeCreationEvent;
-import net.neoforged.neoforge.event.entity.SpawnPlacementRegisterEvent;
+import net.neoforged.neoforge.event.entity.RegisterSpawnPlacementsEvent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -23,17 +23,18 @@ public class ZombiesMore {
 	public static final String MODID = "zombiesmore_yamikingg";
 	public static final Logger LOGGER = LogManager.getLogger(MODID);
 
-	public ZombiesMore(ModContainer container) {
-		IEventBus modEventBus = container.getEventBus();
+	private final ModContainer modContainer;
+
+	public ZombiesMore(IEventBus modEventBus, ModContainer modContainer) {
+        this.modContainer = modContainer;
 
 		modEventBus.addListener(this::commonSetup);
 		modEventBus.addListener(this::registerSpawnPlacements);
 
+
 		Registration.init(modEventBus);
 		DiscoGlassesMaterial.ARMOR_MATERIALS.register(modEventBus);
-		Config.register();
-		Config.loadConfig(Config.CLIENT_CONFIG,
-				net.neoforged.fml.loading.FMLPaths.CONFIGDIR.get().resolve(MODID + "-client.toml"));
+		Config.register(modContainer);
 	}
 
 	private void commonSetup(final FMLCommonSetupEvent event) {
@@ -42,8 +43,8 @@ public class ZombiesMore {
 		});
 	}
 
-	private void registerSpawnPlacements(final SpawnPlacementRegisterEvent event) {
-		LOGGER.info("Registering spawn placements with NeoForge event...");
+	private void registerSpawnPlacements(final RegisterSpawnPlacementsEvent event) {
+		LOGGER.info("Registering spawn placements ...");
 
 		// Helper method to reduce repetition
 		registerMonsterSpawn(event, Registration.DISCO_ZOMBIE.get());
@@ -64,24 +65,24 @@ public class ZombiesMore {
 				SpawnPlacementTypes.ON_GROUND,
 				Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
 				ZombieCreeper::checkMonsterSpawnRules,
-				SpawnPlacementRegisterEvent.Operation.REPLACE);
+				RegisterSpawnPlacementsEvent.Operation.REPLACE);
 
 		event.register(Registration.SURVIVOR.get(),
 				SpawnPlacementTypes.ON_GROUND,
 				Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
 				Survivor::checkMobSpawnRules,
-				SpawnPlacementRegisterEvent.Operation.REPLACE);
+				RegisterSpawnPlacementsEvent.Operation.REPLACE);
 
 		LOGGER.info("Spawn placements registered successfully!");
 	}
 
 	private <T extends AbstractMoZombie> void registerMonsterSpawn(
-			SpawnPlacementRegisterEvent event, EntityType<T> entityType) {
+			RegisterSpawnPlacementsEvent event, EntityType<T> entityType) {
 		event.register(entityType,
 				SpawnPlacementTypes.ON_GROUND,
 				Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
 				AbstractMoZombie::checkMonsterSpawnRules,
-				SpawnPlacementRegisterEvent.Operation.REPLACE);
+				RegisterSpawnPlacementsEvent.Operation.REPLACE);
 	}
 
 	private void registerAttributes(final EntityAttributeCreationEvent event) {

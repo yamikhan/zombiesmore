@@ -91,7 +91,7 @@ public abstract class AbstractMoZombie extends Zombie {
 					new ZombieModel<>(context.bakeLayer(layer)),
 					new ZombieModel<>(context.bakeLayer(innerArmorLayer)),
 					new ZombieModel<>(context.bakeLayer(outerArmorLayer)));
-			this.texture = new ResourceLocation(ZombiesMore.MODID, "textures/entity/" + NAME + ".png");
+			this.texture = ResourceLocation.fromNamespaceAndPath(ZombiesMore.MODID, "textures/entity/" + NAME + ".png");
 		}
 
 		@Override

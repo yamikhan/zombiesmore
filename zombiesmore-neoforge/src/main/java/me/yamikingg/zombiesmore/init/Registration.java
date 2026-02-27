@@ -40,10 +40,10 @@ public class Registration {
 			() -> new ArmorItem(DiscoGlassesMaterial.GLASSES, ArmorItem.Type.HELMET, new Item.Properties()));
 
 	public static final Supplier<SoundEvent> HURT_SURVIVOR = SOUNDS.register("hurt_survivor",
-			() -> SoundEvent.createVariableRangeEvent(new ResourceLocation(ZombiesMore.MODID, "hurt_survivor")));
+			() -> SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath(ZombiesMore.MODID, "hurt_survivor")));
 
 	public static final Supplier<SoundEvent> HURT_SURVIVOR_FEMALE = SOUNDS.register("hurt_survivor_female",
-			() -> SoundEvent.createVariableRangeEvent(new ResourceLocation(ZombiesMore.MODID, "hurt_survivor_female")));
+			() -> SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath(ZombiesMore.MODID, "hurt_survivor_female")));
 
 	public static final Supplier<EntityType<Survivor>> SURVIVOR = ENTITIES.register(Survivor.NAME,
 			() -> EntityType.Builder.of(Survivor::new, MobCategory.CREATURE).sized(0.6f, 1.95F).build(Survivor.NAME));

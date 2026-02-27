@@ -99,7 +99,6 @@ var generateModMetadata = tasks.register("generateModMetadata", ProcessResources
 
 // Include generated metadata in resources
 sourceSets.main.resources.srcDir generateModMetadata
-neoForge.ideSyncTask generateModMetadata  // Auto-run on IDE sync
 
 // Optional: Jar manifest configuration
 jar {

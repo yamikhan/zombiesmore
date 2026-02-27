@@ -2,9 +2,9 @@ package me.yamikingg.zombiesmore;
 
 import com.electronwill.nightconfig.core.file.CommentedFileConfig;
 import com.electronwill.nightconfig.core.io.WritingMode;
-import net.neoforged.neoforge.common.ModConfigSpec;
-import net.neoforged.fml.ModLoadingContext;
+import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.config.ModConfig;
+import net.neoforged.neoforge.common.ModConfigSpec;
 
 import java.nio.file.Path;
 
@@ -43,23 +43,16 @@ public class Config {
                 .define("oldZombieDwarfModel", false);
     }
 
-    public static void register() {
-        ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, CLIENT_CONFIG);
-        // ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, COMMON_CONFIG);
+    public static void register(ModContainer modContainer) {
+        modContainer.registerConfig(ModConfig.Type.CLIENT, CLIENT_CONFIG);
     }
 
-    public static void loadConfig(ModConfigSpec spec, Path path) {
-        ZombiesMore.LOGGER.debug("Loading config file {}", path);
+    public static void loadConfig(ModConfig config) {
+        ZombiesMore.LOGGER.debug("Loading config file {}", config.getFileName());
 
-        final CommentedFileConfig configData = CommentedFileConfig.builder(path)
-                .sync()
-                .autosave()
-                .writingMode(WritingMode.REPLACE)
-                .build();
+        // The config is automatically loaded by NeoForge
+        // You can access values directly from the ModConfigSpec
 
-        ZombiesMore.LOGGER.debug("Built TOML config for {}", path.toString());
-        configData.load();
-        ZombiesMore.LOGGER.debug("Loaded TOML config file {}", path.toString());
-        spec.setConfig(configData);
+        ZombiesMore.LOGGER.debug("Loaded config file {}", config.getFileName());
     }
 }

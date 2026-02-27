@@ -57,14 +57,13 @@ import java.util.UUID;
 
 public class Survivor extends AgeableMob implements NeutralMob {
 
-	private static final String SPEED_MODIFIER_BABY_NAME = "baby_speed_boost";
-	private static final String SPEED_MODIFIER_ATTACKING_NAME = "attacking_speed_boost";
-
-
-	private static final AttributeModifier SPEED_MODIFIER_BABY = new AttributeModifier(
-			SPEED_MODIFIER_BABY_NAME, 0.5D, AttributeModifier.Operation.ADD_MULTIPLIED_BASE);
+	private static final UUID SPEED_MODIFIER_ATTACKING_UUID = UUID.fromString("49455A49-7EC5-45BA-B886-3B90B23A1718");
 	private static final AttributeModifier SPEED_MODIFIER_ATTACKING = new AttributeModifier(
-			SPEED_MODIFIER_ATTACKING_NAME, 0.05D, AttributeModifier.Operation.ADD_VALUE);
+			ResourceLocation.fromNamespaceAndPath(ZombiesMore.MODID, "attacking_speed_boost"),
+			0.05D,
+			AttributeModifier.Operation.ADD_VALUE);
+	private static final ResourceLocation SPEED_MODIFIER_ATTACKING_ID =
+			ResourceLocation.fromNamespaceAndPath(ZombiesMore.MODID, "attacking_speed_boost");
 
 	private static final EntityDataAccessor<Integer> DATA_TYPE_ID =
 			SynchedEntityData.defineId(Survivor.class, EntityDataSerializers.INT);
@@ -112,12 +111,13 @@ public class Survivor extends AgeableMob implements NeutralMob {
 	}
 
 	@Override
-	public int getExperienceReward() {
+	public int getBaseExperienceReward() {
 		if (this.isBaby()) {
 			this.xpReward = (int) ((float) this.xpReward * 2.5F);
 		}
-		return super.getExperienceReward();
+		return super.getBaseExperienceReward();
 	}
+
 
 	@Override
 	public int getRemainingPersistentAngerTime() {
@@ -195,15 +195,12 @@ public class Survivor extends AgeableMob implements NeutralMob {
 	protected void customServerAiStep() {
 		AttributeInstance movementSpeed = this.getAttribute(Attributes.MOVEMENT_SPEED);
 		if (movementSpeed != null) {
-			// Remove by the modifier object itself, not by UUID
-			movementSpeed.removeModifier(SPEED_MODIFIER_ATTACKING);
-			movementSpeed.removeModifier(SPEED_MODIFIER_BABY);
-
-			if (this.isAngry() && !this.isBaby()) {
-				movementSpeed.addTransientModifier(SPEED_MODIFIER_ATTACKING);
-			}
-			if (this.isBaby()) {
-				movementSpeed.addTransientModifier(SPEED_MODIFIER_BABY);
+			if (this.isAngry()) {
+				if (!this.isBaby() && !movementSpeed.hasModifier(SPEED_MODIFIER_ATTACKING_ID)) {
+					movementSpeed.addTransientModifier(SPEED_MODIFIER_ATTACKING);
+				}
+			} else {
+				movementSpeed.removeModifier(SPEED_MODIFIER_ATTACKING_ID);
 			}
 		}
 
@@ -319,8 +316,8 @@ public class Survivor extends AgeableMob implements NeutralMob {
 	}
 
 	@Override
-	protected void dropCustomDeathLoot(@NotNull DamageSource damageSource, int looting, boolean hitByPlayer) {
-		super.dropCustomDeathLoot(damageSource, looting, hitByPlayer);
+	protected void dropCustomDeathLoot(ServerLevel serverLevel, DamageSource damageSource, boolean hitByPlayer) {
+		super.dropCustomDeathLoot(serverLevel, damageSource, hitByPlayer);
 		Entity entity = damageSource.getEntity();
 		if (entity instanceof Creeper creeper) {
 			if (creeper.canDropMobsSkull()) {
@@ -412,12 +409,15 @@ public class Survivor extends AgeableMob implements NeutralMob {
 			super(modelPart);
 		}
 
-		// This NeoForge 1.20.6 build uses the old 8-arg renderToBuffer with float RGBA
 		@Override
-		public void renderToBuffer(@NotNull PoseStack poseStack, @NotNull VertexConsumer vertexConsumer,
-								   int packedLight, int packedOverlay,
-								   float red, float green, float blue, float alpha) {
-			super.renderToBuffer(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
+		public void renderToBuffer(PoseStack poseStack, VertexConsumer vertexConsumer,
+								   int packedLight, int packedOverlay, int packedColor) {
+			this.head.render(poseStack, vertexConsumer, packedLight, packedOverlay, packedColor);
+			this.body.render(poseStack, vertexConsumer, packedLight, packedOverlay, packedColor);
+			this.rightArm.render(poseStack, vertexConsumer, packedLight, packedOverlay, packedColor);
+			this.leftArm.render(poseStack, vertexConsumer, packedLight, packedOverlay, packedColor);
+			this.rightLeg.render(poseStack, vertexConsumer, packedLight, packedOverlay, packedColor);
+			this.leftLeg.render(poseStack, vertexConsumer, packedLight, packedOverlay, packedColor);
 		}
 	}
 

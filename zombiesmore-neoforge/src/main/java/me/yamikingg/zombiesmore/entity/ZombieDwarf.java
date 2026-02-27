@@ -65,7 +65,7 @@ public class ZombieDwarf extends AbstractMoZombie {
 
 
 	public static class RendererZombieDwarf extends HumanoidMobRenderer<AbstractMoZombie, ZombieDwarfModel<AbstractMoZombie>> {
-		public final ResourceLocation TEXTURE = new ResourceLocation(ZombiesMore.MODID, "textures/entity/" + NAME + ".png");
+		public final ResourceLocation TEXTURE = ResourceLocation.fromNamespaceAndPath(ZombiesMore.MODID, "textures/entity/" + NAME + ".png");
 
 		@Override
 		public ResourceLocation getTextureLocation(AbstractMoZombie entity) {
@@ -95,9 +95,9 @@ public class ZombieDwarf extends AbstractMoZombie {
 			return entity.isAggressive();
 		}
 
-		public static final ModelLayerLocation DWARF = new ModelLayerLocation(new ResourceLocation(ZombiesMore.MODID, NAME), "main");
-		public static final ModelLayerLocation DWARF_INNER = new ModelLayerLocation(new ResourceLocation(ZombiesMore.MODID, NAME + "_inner"), "main");
-		public static final ModelLayerLocation DWARF_OUTER = new ModelLayerLocation(new ResourceLocation(ZombiesMore.MODID, NAME + "_outer"), "main");
+		public static final ModelLayerLocation DWARF = new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(ZombiesMore.MODID, NAME), "main");
+		public static final ModelLayerLocation DWARF_INNER = new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(ZombiesMore.MODID, NAME + "_inner"), "main");
+		public static final ModelLayerLocation DWARF_OUTER = new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(ZombiesMore.MODID, NAME + "_outer"), "main");
 
 		public ZombieDwarfModel(ModelPart root) {
 			super(root);
@@ -173,8 +173,14 @@ public class ZombieDwarf extends AbstractMoZombie {
 		}
 
 		@Override
-		public void renderToBuffer(PoseStack poseStack, VertexConsumer vertexConsumer, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
-			super.renderToBuffer(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
+		public void renderToBuffer(PoseStack poseStack, VertexConsumer vertexConsumer,
+								   int packedLight, int packedOverlay, int packedColor) {
+			this.head.render(poseStack, vertexConsumer, packedLight, packedOverlay, packedColor);
+			this.body.render(poseStack, vertexConsumer, packedLight, packedOverlay, packedColor);
+			this.rightArm.render(poseStack, vertexConsumer, packedLight, packedOverlay, packedColor);
+			this.leftArm.render(poseStack, vertexConsumer, packedLight, packedOverlay, packedColor);
+			this.rightLeg.render(poseStack, vertexConsumer, packedLight, packedOverlay, packedColor);
+			this.leftLeg.render(poseStack, vertexConsumer, packedLight, packedOverlay, packedColor);
 		}
 	}
 }

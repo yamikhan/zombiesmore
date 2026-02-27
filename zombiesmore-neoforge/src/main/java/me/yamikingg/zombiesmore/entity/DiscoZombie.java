@@ -19,7 +19,7 @@ public class DiscoZombie extends AbstractMoZombie {
 
 	@Override
 	public @NotNull SoundEvent getAmbientSound() {
-		return SoundEvents.MUSIC_DISC_STAL;
+		return SoundEvents.HUSK_AMBIENT;
 	}
 
 	@Override
