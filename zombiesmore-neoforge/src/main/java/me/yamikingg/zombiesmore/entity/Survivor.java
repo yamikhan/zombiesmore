@@ -1,15 +1,5 @@
 package me.yamikingg.zombiesmore.entity;
 
-import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
-import net.minecraft.client.model.HumanoidModel;
-import net.minecraft.client.model.geom.ModelLayerLocation;
-import net.minecraft.client.model.geom.ModelLayers;
-import net.minecraft.client.model.geom.ModelPart;
-import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.entity.EntityRendererProvider;
-import net.minecraft.client.renderer.entity.HumanoidMobRenderer;
-import net.minecraft.client.renderer.entity.layers.HumanoidArmorLayer;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -45,12 +35,9 @@ import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.phys.AABB;
 import me.yamikingg.zombiesmore.ZombiesMore;
 import me.yamikingg.zombiesmore.init.Registration;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
-import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.UUID;
 
@@ -94,7 +81,7 @@ public class Survivor extends AgeableMob implements NeutralMob {
 	@Override
 	protected void defineSynchedData(SynchedEntityData.Builder builder) {
 		super.defineSynchedData(builder);
-		builder.define(DATA_TYPE_ID, 0); // default value = 0
+		builder.define(DATA_TYPE_ID, 0);
 	}
 
 	@Override
@@ -117,7 +104,6 @@ public class Survivor extends AgeableMob implements NeutralMob {
 		}
 		return super.getBaseExperienceReward();
 	}
-
 
 	@Override
 	public int getRemainingPersistentAngerTime() {
@@ -362,7 +348,7 @@ public class Survivor extends AgeableMob implements NeutralMob {
 		if (random.nextFloat() < 0.5F) {
 			this.targetSelector.addGoal(4, new NearestAttackableTargetGoal<>(this, Zombie.class, true));
 		} else {
-			this.targetSelector.addGoal(4, new PanicGoal(this, 1.2D));
+			this.goalSelector.addGoal(4, new PanicGoal(this, 1.2D));
 		}
 	}
 
@@ -396,64 +382,5 @@ public class Survivor extends AgeableMob implements NeutralMob {
 				.add(Attributes.ARMOR, 0.0D)
 				.add(Attributes.SPAWN_REINFORCEMENTS_CHANCE, 0.0D)
 				.add(Attributes.MAX_HEALTH, 20.0D);
-	}
-
-	// ==================== CLIENT-SIDE ====================
-
-	@OnlyIn(Dist.CLIENT)
-	public static class SurvivorModel<S extends Survivor> extends HumanoidModel<S> {
-		public static final ModelLayerLocation LAYER_LOCATION =
-				new ModelLayerLocation(ResourceLocation.tryBuild(ZombiesMore.MODID, NAME), "main");
-
-		public SurvivorModel(ModelPart modelPart) {
-			super(modelPart);
-		}
-
-		@Override
-		public void renderToBuffer(PoseStack poseStack, VertexConsumer vertexConsumer,
-								   int packedLight, int packedOverlay, int packedColor) {
-			this.head.render(poseStack, vertexConsumer, packedLight, packedOverlay, packedColor);
-			this.body.render(poseStack, vertexConsumer, packedLight, packedOverlay, packedColor);
-			this.rightArm.render(poseStack, vertexConsumer, packedLight, packedOverlay, packedColor);
-			this.leftArm.render(poseStack, vertexConsumer, packedLight, packedOverlay, packedColor);
-			this.rightLeg.render(poseStack, vertexConsumer, packedLight, packedOverlay, packedColor);
-			this.leftLeg.render(poseStack, vertexConsumer, packedLight, packedOverlay, packedColor);
-		}
-	}
-
-	@OnlyIn(Dist.CLIENT)
-	public static class SurvivorRenderer extends HumanoidMobRenderer<Survivor, SurvivorModel<Survivor>> {
-		private static final ResourceLocation MALE_TEXTURE =
-				ResourceLocation.tryBuild(ZombiesMore.MODID, "textures/entity/survivor_0.png");
-		private static final ResourceLocation FEMALE_TEXTURE =
-				ResourceLocation.tryBuild(ZombiesMore.MODID, "textures/entity/survivor_1.png");
-
-		private final SurvivorModel<Survivor> normalModel;
-		private final SurvivorModel<Survivor> slimModel;
-
-		public SurvivorRenderer(EntityRendererProvider.Context context) {
-			super(context, new SurvivorModel<>(context.bakeLayer(ModelLayers.PLAYER)), 0.5F);
-
-			this.normalModel = this.getModel();
-			this.slimModel = new SurvivorModel<>(context.bakeLayer(ModelLayers.PLAYER_SLIM));
-
-			this.addLayer(new HumanoidArmorLayer<>(this,
-					new HumanoidModel<>(context.bakeLayer(ModelLayers.PLAYER_INNER_ARMOR)),
-					new HumanoidModel<>(context.bakeLayer(ModelLayers.PLAYER_OUTER_ARMOR)),
-					context.getModelManager()));
-		}
-
-		@Override
-		public void render(Survivor survivor, float entityYaw, float partialTicks,
-						   PoseStack poseStack, MultiBufferSource buffer, int packedLight) {
-			int type = survivor.getSurvivorType();
-			this.model = (type >= 1) ? slimModel : normalModel;
-			super.render(survivor, entityYaw, partialTicks, poseStack, buffer, packedLight);
-		}
-
-		@Override
-		public ResourceLocation getTextureLocation(Survivor entity) {
-			return (entity.getSurvivorType() >= 1) ? FEMALE_TEXTURE : MALE_TEXTURE;
-		}
 	}
 }

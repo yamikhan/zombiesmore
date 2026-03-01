@@ -1,11 +1,5 @@
 package me.yamikingg.zombiesmore.entity;
 
-import net.minecraft.client.model.ZombieModel;
-import net.minecraft.client.model.geom.ModelLayerLocation;
-import net.minecraft.client.model.geom.ModelLayers;
-import net.minecraft.client.renderer.entity.AbstractZombieRenderer;
-import net.minecraft.client.renderer.entity.EntityRendererProvider;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.damagesource.DamageSource;
@@ -16,9 +10,6 @@ import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.monster.Zombie;
 import net.minecraft.world.level.Level;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
-import me.yamikingg.zombiesmore.ZombiesMore;
 
 public abstract class AbstractMoZombie extends Zombie {
 
@@ -30,7 +21,7 @@ public abstract class AbstractMoZombie extends Zombie {
 	public static String NAME;
 
 	public String getNAMEID() {
-		return this.NAME;
+		return NAME;
 	}
 
 	@Override
@@ -54,7 +45,7 @@ public abstract class AbstractMoZombie extends Zombie {
 				.add(Attributes.MOVEMENT_SPEED, 0.3F)
 				.add(Attributes.ATTACK_DAMAGE, 3.0D)
 				.add(Attributes.ARMOR, 2.0D)
-				.add(Attributes.SPAWN_REINFORCEMENTS_CHANCE, 0.0D) // Fixed: Added value
+				.add(Attributes.SPAWN_REINFORCEMENTS_CHANCE, 0.0D)
 				.add(Attributes.MAX_HEALTH, 25.0D);
 	}
 
@@ -68,35 +59,8 @@ public abstract class AbstractMoZombie extends Zombie {
 		this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, ZombieNotch.class, true));
 	}
 
-	// New method for 1.20+ - if you want to keep the old NAME for compatibility
 	@Override
 	protected boolean convertsInWater() {
-		return false; // Husk-specific behavior, change as needed
-	}
-
-	@OnlyIn(Dist.CLIENT)
-	public static class MoZombieRenderer extends AbstractZombieRenderer<AbstractMoZombie, ZombieModel<AbstractMoZombie>> {
-		private final ResourceLocation texture;
-
-		public MoZombieRenderer(EntityRendererProvider.Context context, String NAME) {
-			this(context, ModelLayers.ZOMBIE, ModelLayers.ZOMBIE_INNER_ARMOR, ModelLayers.ZOMBIE_OUTER_ARMOR, NAME);
-		}
-
-		public MoZombieRenderer(EntityRendererProvider.Context context,
-								ModelLayerLocation layer,
-								ModelLayerLocation innerArmorLayer,
-								ModelLayerLocation outerArmorLayer,
-								String NAME) {
-			super(context,
-					new ZombieModel<>(context.bakeLayer(layer)),
-					new ZombieModel<>(context.bakeLayer(innerArmorLayer)),
-					new ZombieModel<>(context.bakeLayer(outerArmorLayer)));
-			this.texture = ResourceLocation.fromNamespaceAndPath(ZombiesMore.MODID, "textures/entity/" + NAME + ".png");
-		}
-
-		@Override
-		public ResourceLocation getTextureLocation(AbstractMoZombie entity) {
-			return texture;
-		}
+		return false;
 	}
 }

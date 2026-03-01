@@ -1,11 +1,10 @@
 package me.yamikingg.zombiesmore.entity;
 
-import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
@@ -35,21 +34,22 @@ import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.block.BedBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
-import me.yamikingg.zombiesmore.ZombiesMore;
 
 import javax.annotation.Nullable;
 import java.util.UUID;
 
 public class ZombieCreeper extends Creeper {
+
 	public ZombieCreeper(EntityType<ZombieCreeper> entityType, Level world) {
 		super(entityType, world);
 	}
 
-	static final net.minecraft.network.syncher.EntityDataAccessor<Boolean> DATA_CONVERTING_ID = SynchedEntityData.defineId(ZombieCreeper.class, EntityDataSerializers.BOOLEAN);
+	private static final EntityDataAccessor<Boolean> DATA_CONVERTING_ID =
+			SynchedEntityData.defineId(ZombieCreeper.class, EntityDataSerializers.BOOLEAN);
+
 	public static final int ID = 5;
 	public static final String NAME = "zombie_creeper";
+
 	private UUID conversionStarter;
 	private int creeperConversionTime;
 	private boolean canBreakDoors;
@@ -216,18 +216,5 @@ public class ZombieCreeper extends Creeper {
 	@Override
 	protected void populateDefaultEquipmentSlots(RandomSource random, DifficultyInstance difficulty) {
 		super.populateDefaultEquipmentSlots(random, difficulty);
-		// Add any custom equipment here if needed
-	}
-
-	@OnlyIn(Dist.CLIENT)
-	public static class CreeperRenderer extends net.minecraft.client.renderer.entity.CreeperRenderer {
-		public CreeperRenderer(EntityRendererProvider.Context context) {
-			super(context);
-		}
-
-		@Override
-		public ResourceLocation getTextureLocation(Creeper entity) {
-			return ResourceLocation.tryBuild(ZombiesMore.MODID, "textures/entity/" + NAME + ".png");
-		}
 	}
 }
