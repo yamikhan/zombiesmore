@@ -31,7 +31,6 @@ public class ZombiesMore {
 		modEventBus.addListener(this::registerAttributes);
 		modEventBus.addListener(this::registerSpawnPlacements);
 
-		DiscoGlassesMaterial.ARMOR_MATERIALS.register(modEventBus);
 		Registration.init(modEventBus);
 
 		net.minecraftforge.common.MinecraftForge.EVENT_BUS.register(this);

@@ -12,7 +12,6 @@ public class DiscoZombie extends AbstractMoZombie {
 
 	public static final int ID = 23;
 	public static final String NAME = "disco_zombie";
-
 	public DiscoZombie(EntityType<? extends AbstractMoZombie> entityType, Level world) {
 		super(entityType, world);
 	}

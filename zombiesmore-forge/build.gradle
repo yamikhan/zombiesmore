@@ -23,7 +23,7 @@ java.toolchain.languageVersion = JavaLanguageVersion.of(21)
 
 minecraft {
     mappings channel: 'parchment', version: '2024.11.17-1.21.1'
-
+    reobf = false
     runs {
         client {
             workingDirectory project.file('run')
@@ -76,16 +76,16 @@ minecraft {
 
 processResources {
     // This ensures the mod_version property is available during expansion
-    inputs.property "mod_version", project.findProperty('mod_version') ?: '0.2.4'
+    inputs.property "mod_version", project.findProperty('mod_version') ?: '0.2.5'
 
     filesMatching("META-INF/mods.toml") {
         // This replaces ${mod_version} with the actual value
-        expand "mod_version": project.findProperty('mod_version') ?: '0.2.4'
+        expand "mod_version": project.findProperty('mod_version') ?: '0.2.5'
     }
 
     // This handles any other files that might need expansion
     filesMatching("**/*.toml") {
-        expand "mod_version": project.findProperty('mod_version') ?: '0.2.4'
+        expand "mod_version": project.findProperty('mod_version') ?: '0.2.5'
     }
 }
 
@@ -138,13 +138,12 @@ repositories {
         url "https://maven.shedaniel.me/"
     }
     maven {
-        url "https://maven.parchmentmc.org"  // Ensure Parchment is in repositories
+        url "https://maven.parchmentmc.org"
     }
 }
+
 sourceSets.each {
     def dir = layout.buildDirectory.dir("sourcesSets/$it.name")
     it.output.resourcesDir = dir
     it.java.destinationDirectory = dir
 }
-// Optional: Configure jar output
-jar.finalizedBy('reobfJar')

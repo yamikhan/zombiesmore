@@ -8,14 +8,10 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
-import net.minecraft.world.item.ArmorItem;
-import net.minecraft.world.item.CreativeModeTab;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.*;
 import net.minecraftforge.common.ForgeSpawnEggItem;
 import net.minecraftforge.event.entity.EntityAttributeCreationEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
@@ -36,13 +32,6 @@ public class Registration {
 		CREATIVE_MODE_TABS.register(modEventBus);
 	}
 
-	public static final RegistryObject<Item> DISCO_GLASSES = ITEMS.register("disco_glasses",
-			() -> new ArmorItem(
-					DiscoGlassesMaterial.GLASSES.getHolder().orElseThrow(), // <-- Holder<ArmorMaterial>
-					ArmorItem.Type.HELMET,
-					new Item.Properties()
-			)
-	);
 	public static final RegistryObject<SoundEvent> HURT_SURVIVOR = SOUNDS.register("hurt_survivor", () -> SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath(ZombiesMore.MODID, "hurt_survivor")));
 	public static final RegistryObject<SoundEvent> HURT_SURVIVOR_FEMALE = SOUNDS.register("hurt_survivor_female", () -> SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath(ZombiesMore.MODID, "hurt_survivor_female")));
 
@@ -89,6 +78,13 @@ public class Registration {
 	public static final RegistryObject<EntityType<ZombieCreeper>> ZOMBIE_CREEPER = ENTITIES.register(ZombieCreeper.NAME, () -> EntityType.Builder.of(ZombieCreeper::new, MobCategory.MONSTER).sized(0.6f, 1.51f).build(ZombieCreeper.NAME));
 	public static final RegistryObject<Item> ZOMBIE_CREEPER_SPAWN_EGG = ITEMS.register(ZombieCreeper.NAME + "_spawn_egg", () -> new ForgeSpawnEggItem(ZOMBIE_CREEPER, -16724992, -16724788, new Item.Properties()));
 
+	public static final RegistryObject<Item> DISCO_GLASSES = ITEMS.register("disco_glasses",
+			() -> new ArmorItem(
+					DiscoGlassesMaterial.HOLDER,
+					ArmorItem.Type.HELMET,
+					new Item.Properties()
+			)
+	);
 
 	public static final RegistryObject<CreativeModeTab> ITEM_GROUP = CREATIVE_MODE_TABS.register("item_group",
 			() -> CreativeModeTab.builder()
@@ -114,7 +110,6 @@ public class Registration {
 					.build()
 	);
 
-	@SubscribeEvent
 	public static void setup(final EntityAttributeCreationEvent event) {
 		event.put(DISCO_ZOMBIE.get(), DiscoZombie.createAttributes().build());
 		event.put(ZOMBIE_DWARF.get(), ZombieDwarf.createAttributes().build());
@@ -127,7 +122,7 @@ public class Registration {
 		event.put(ZOMBIE_NOTCH.get(), ZombieNotch.createAttributes().build());
 		event.put(ZOMBIE_PA.get(), ZombiePa.createAttributes().build());
 		event.put(ZOMBIE_PIRATE.get(), ZombiePirate.createAttributes().build());
-		event.put(NETHER_ZOMBIE.get(), DiscoZombie.createAttributes().build());
+		event.put(NETHER_ZOMBIE.get(), NetherZombie.createAttributes().build());
 		event.put(SURVIVOR.get(), Survivor.createAttributes().build());
 		event.put(ZOMBIE_CREEPER.get(), ZombieCreeper.createAttributes().build());
 	}
