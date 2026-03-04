@@ -60,7 +60,7 @@ public class ZombieDwarf extends AbstractMoZombie {
 	@Override
 	public EntityDimensions getDefaultDimensions(Pose pose) {
 		return this.isBaby()
-				? super.getDimensions(pose).scale(0.6F)
+				? super.getDefaultDimensions(pose).scale(0.6F)
 				: EntityDimensions.scalable(0.7F, 1.3F);
 	}
 
